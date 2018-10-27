@@ -1,0 +1,31 @@
+{
+  "name": "basicgrabweb",
+  "version": "1.0.0",
+  "description": "My midterm project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huuphong178/BasicGrabWeb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "moment": "^2.22.2",
+    "morgan": "^1.9.1",
+    "mysql": "^2.16.0",
+    "rand-token": "^0.4.0"
+  },
+  "bugs": {
+    "url": "https://github.com/huuphong178/BasicGrabWeb/issues"
+  },
+  "homepage": "https://github.com/huuphong178/BasicGrabWeb#readme"
+}
