@@ -32,6 +32,7 @@ router.get('/:id', (req, res) => {
     })
 })
 
+<<<<<<< HEAD
 router.post('/', (req,res) => {
     requestRepo.add(req.body)
         .then(value => {
@@ -74,8 +75,7 @@ router.delete('/', (req,res)=>{
             res.end('View error log on console');
         })
 })
-
-
+=======
 //NL
 router.get('/minway/:requestID', (req, res) => {
 	var requestID=req.params.requestID;
@@ -96,4 +96,5 @@ router.get('/minway/:requestID', (req, res) => {
 		})
 })
 
+>>>>>>> f851fbe9d4a7bb3b67a37a7d22872bc405feeae3
 module.exports = router;

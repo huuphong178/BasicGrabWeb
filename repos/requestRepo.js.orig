@@ -5,6 +5,7 @@ exports.loadAll = () => {
 	return db.load(sql);
 }
 
+<<<<<<< HEAD
 exports.getRequest=id=>{
     var sql=`select * from request where id=${id}`;
     return db.excute(sql);
@@ -14,8 +15,6 @@ var GenerateID=function(){
     var day = new Date();
     var timenow = day.getTime();
     return timenow;
-}
-
 }
 var add=function(requestEntity){
     // requestEntity = {
@@ -57,6 +56,7 @@ exports.update=requestEntity=>{
         .catch(err=>reject(err));
     });
 }
+=======
 //NL
 exports.loadInfo = (id, status) => {
 	//Trả về thông tin tài xế, vị trí và vị trí của khách
@@ -67,3 +67,4 @@ exports.loadInfo = (id, status) => {
 	WHERE req.driver_id = dri.id AND cur_dri.id_driver = dri.id AND req.status = ${status} AND req.id = ${id}`
 	return db.excute(sql);
 }
+>>>>>>> f851fbe9d4a7bb3b67a37a7d22872bc405feeae3
