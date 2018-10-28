@@ -16,7 +16,6 @@ var GenerateID=function(){
     return timenow;
 }
 
-}
 var add=function(requestEntity){
     // requestEntity = {
     //     name: 'phong,

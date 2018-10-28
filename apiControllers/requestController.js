@@ -1,7 +1,7 @@
 var express = require('express');
 var requestRepo = require('../repos/requestRepo');
 var googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyBkLC43G_H0JQTCbxCRjhtLPwGgXWJNPq4',
+    key: 'AIzaSyDTOISAXq0i8QpAtlaI1jx6IZXjHpDHgVU',
     Promise: Promise
 });
 
@@ -16,25 +16,9 @@ router.get('/', (req, res) => {
 			console.log(err);
 			res.statusCode = 500;
 			res.end('View error log on console');
-		})
-})
-router.get('/:id', (req, res) => {
-    var id = req.params.id;
-    requestRepo.getRequest(id).then(rows=>{
-        if(rows.length>0){
-            var request=rows[0];
-            res.statusCode=200;
-            res.json(request);
-        } else{
-            res.statusCode=204;
-        }
-        
-    }).catch(err=>{
-            console.log(err);
-			res.statusCode = 500;
-			res.end('View error log on console');
-    })
-})
+		});
+});
+
 
 router.post('/', (req,res) => {
     requestRepo.add(req.body)
@@ -47,8 +31,8 @@ router.post('/', (req,res) => {
             console.log(err);
 			res.statusCode = 500;
 			res.end('View error log on console');
-    })
-})
+    });
+});
 
 router.put('/', (req, res) => {
     requestRepo.update(req.body)
@@ -60,8 +44,8 @@ router.put('/', (req, res) => {
             console.log(err);
 			res.statusCode = 500;
 			res.end('View error log on console');
-        })
-})
+        });
+});
 
 router.delete('/', (req,res)=>{
     console.log(req.body.id);
@@ -76,12 +60,12 @@ router.delete('/', (req,res)=>{
             console.log(err);
             res.statusCode=500;
             res.end('View error log on console');
-        })
-})
+        });
+});
 
 
 //NL
-router.get('/minway/:requestID', (req, res) => {
+router.get('/minway/:requestID', (req, res) => {console.log("ok");
 	var requestID=req.params.requestID;
 	var status = 2; //đã có xe nhận
 
@@ -134,5 +118,21 @@ router.get('/reverse-geocoding', (req, res) => {
             console.log(err);
         });
 });
-
+router.get('/:id', (req, res) => {
+    var id = req.params.id;
+    requestRepo.getRequest(id).then(rows=>{
+        if(rows.length>0){
+            var request=rows[0];
+            res.statusCode=200;
+            res.json(request);
+        } else{
+            res.statusCode=204;
+        }
+        
+    }).catch(err=>{
+            console.log(err);
+			res.statusCode = 500;
+			res.end('View error log on console');
+    });
+});
 module.exports = router;
