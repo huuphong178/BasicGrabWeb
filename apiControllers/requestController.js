@@ -4,6 +4,7 @@ var googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyDTOISAXq0i8QpAtlaI1jx6IZXjHpDHgVU',
     Promise: Promise
 });
+var moment = require('moment');
 
 var router = express.Router();
 
@@ -82,6 +83,43 @@ router.get('/minway/:requestID', (req, res) => {console.log("ok");
             res.statusCode = 500;
             res.end('View error log on console');
         });
+});
+
+router.get('/getRequestRealtime', (req, res) => {
+    var timestamp = 0;
+    if(req.query.timestamp){
+        timestamp = +req.query.timestamp;
+    }
+
+    var loop = 0;
+    var return_timestamp = new Date().getTime();
+    var fn = () => {
+        console.log(timestamp);
+        requestRepo.getRequestBetterID(timestamp)
+            .then(rows =>{
+                if(rows.length > 0){
+                    console.log('rowssssssss');
+                    res.json({
+                        timestamp: return_timestamp,
+                        arr: rows
+                    });
+                }else{
+                    loop++;
+                    console.log(`loop: ${loop}`);
+                    if(loop < 4){
+                        setTimeout(fn, 2500);
+                    }else{
+                        res.statusCode = 204;
+                        res.end('no data');
+                    }
+                }
+            }).catch(err => {
+                res.statusCode = 500;
+                res.end(err);
+            });
+    }
+
+    fn();
 });
 
 // Phi

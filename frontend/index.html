@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="./app3.css">
+	<title>REQUEST MANAGEMENT</title>
+</head>
+<body>
+	<div class="container">
+		<div class="banner">
+			<img src="https://image.bizlive.vn/670x350/uploaded/hoangly_tt/2017_06_02/go-ixe_-_banner-706x360_iyzr.jpg">
+		</div>
+		<div style="padding-top: 20px;" id="app">
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Name</th>
+						<th>Phone</th>
+						<th>Location</th>
+						<th>Status</th>
+						<th>Note</th>
+						<th>Driver</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(item, index) in list">
+						<th scope="row">{{item.id}}</th>
+						<td>{{item.name}}</td>
+						<td>{{item.phone}}</td>
+						<td>{{item.location}}</td>
+						<td>{{item.status}}</td>
+						<td>{{item.note}}</td>
+						<td>{{item.driver}}</td>
+						<td style="text-align: center;"><button type="button" class="btn btn-info" v-on:click="viewDetail(index)">Detail</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>	
+	</div>
+
+	
+
+
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script type="text/javascript" src="./app3.js"></script>
+</body>
+</html>

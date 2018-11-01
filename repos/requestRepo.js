@@ -66,3 +66,8 @@ exports.loadInfo = (id, status) => {
 	WHERE req.driver_id = dri.id AND cur_dri.id_driver = dri.id AND req.status = ${status} AND req.id = ${id}`
 	return db.excute(sql);
 }
+
+exports.getRequestBetterID = (id) =>{
+    var sql=`select * from request where id>=${id}`;
+    return db.load(sql);
+}
