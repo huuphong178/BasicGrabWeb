@@ -1,18 +1,8 @@
 var express = require('express');
 var driverRepo = require('../repos/driverRepo');
+var authRepo= require('../repos/authRepo');
 
 var router = express.Router();
-
-router.get('/', (req, res) => {
-	driverRepo.loadAll()
-		.then(rows => {
-			res.json(rows);
-		}).catch(err => {
-			console.log(err);
-			res.statusCode = 500;
-			res.end('View error log on console');
-		})
-})
 
 router.put('/', (req, res) => {
 	var id = req.body.id;
@@ -32,26 +22,13 @@ router.put('/', (req, res) => {
 		})
 })
 
-router.post('/register', (req, res) => {
-	var driverEntity = {
-		id: new Date().getTime(),
-        name: req.body.name,
-        phone: req.body.phone,
-        address: req.body.address,
-        bike_id: req.body.bike_id,
-		bike_type: req.body.bike_type,
-		username: req.body.username,
-		password: req.body.password
-	}
+router.use(authRepo.verifyAccessTokenAdmin);
 
-	driverRepo.register(driverEntity)
+router.get('/', (req, res) => {
+	driverRepo.loadAll()
 		.then(rows => {
-			driverRepo.insertCurrDriver(driverEntity.id, 2, {X:null, Y:null})
-				.then(r => {
-					res.json(rows);
-				})
-		})
-		.catch(err => {
+			res.json(rows);
+		}).catch(err => {
 			console.log(err);
 			res.statusCode = 500;
 			res.end('View error log on console');
