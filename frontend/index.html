@@ -19,7 +19,7 @@
 						<th>#</th>
 						<th>Name</th>
 						<th>Phone</th>
-						<th>Location</th>
+						<th>Address</th>
 						<th>Status</th>
 						<th>Note</th>
 						<th>Driver</th>
@@ -27,11 +27,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="(item, index) in list">
+					<tr v-for="(item, index) in sortedArray">
 						<th scope="row">{{item.id}}</th>
 						<td>{{item.name}}</td>
 						<td>{{item.phone}}</td>
-						<td>{{item.location}}</td>
+						<td>{{item.address}}</td>
 						<td>{{item.status}}</td>
 						<td>{{item.note}}</td>
 						<td>{{item.driver}}</td>
@@ -42,7 +42,7 @@
 		</div>	
 	</div>
 
-	
+
 
 
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>

@@ -23,7 +23,8 @@
     "moment": "^2.22.2",
     "morgan": "^1.9.1",
     "mysql": "^2.16.0",
-    "rand-token": "^0.4.0"
+    "rand-token": "^0.4.0",
+    "eventemitter3": "^3.1.0"
   },
   "bugs": {
     "url": "https://github.com/huuphong178/BasicGrabWeb/issues"

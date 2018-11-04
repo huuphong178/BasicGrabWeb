@@ -5,6 +5,7 @@ var googleMapsClient = require('@google/maps').createClient({
     Promise: Promise
 });
 var moment = require('moment');
+var events = require('../event/events');
 
 var router = express.Router();
 
@@ -26,7 +27,9 @@ router.post('/', (req,res) => {
         .then(value => {
 		//	console.log(value);
 			res.statusCode = 201;
-			res.json(req.body);
+            res.json(req.body);
+
+            events.publishRequestAdded(req.body);
         })
         .catch(err=>{
             console.log(err);
@@ -92,8 +95,8 @@ router.get('/getRequestRealtime', (req, res) => {
     }
 
     var loop = 0;
-    var return_timestamp = new Date().getTime();
     var fn = () => {
+        var return_timestamp = new Date().getTime();
         console.log(timestamp);
         requestRepo.getRequestBetterID(timestamp)
             .then(rows =>{
