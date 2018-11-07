@@ -1,7 +1,7 @@
 var eventEmitter = require('eventemitter3');
 var emitter = new eventEmitter();
 
-var subscribeEvent = (req, res, event) => {
+var subscribeEvent = (req, res, eventArr) => {
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -15,31 +15,47 @@ var subscribeEvent = (req, res, event) => {
     var handler = (data) => {
         var json = JSON.stringify(data);
         res.write(`retry: 500\n`);
-        res.write(`event: ${event}\n`);
+        res.write(`event: ${data.event}\n`);
         res.write(`data: ${json}\n`);
         res.write(`\n`);
     }
 
-    emitter.on(event, handler);
+    
+    eventArr.forEach(element => {
+        emitter.on(element, handler);
+    });
+    //emitter.on(event, handler);
 
     req.on('close', () => {
         clearInterval(heartBeat);
-        emitter.removeListener(event, handler);
+        eventArr.forEach(element => {
+            emitter.removeListener(element, handler);
+        });
+        //emitter.removeListener(event, handler);
     });
 }
 
 //events
 var REQUEST_ADDED = 'REQUEST_ADDED';
+var REQUEST_MODIFIED = 'REQUEST_MODIFIED';
 
-var subscribeRequestAdded = (req, res) => {
-    subscribeEvent(req, res, REQUEST_ADDED);
+//RequestAdded
+var subscribeRequestEvent = (req, res) => {
+    subscribeEvent(req, res, [REQUEST_ADDED, REQUEST_MODIFIED]);
 }
 
 var publishRequestAdded = (requestObject) => {
+    requestObject.event = REQUEST_ADDED;
     emitter.emit(REQUEST_ADDED, requestObject);
 }
 
+var publishRequestModified = (requestObject) => {
+    requestObject.event = REQUEST_MODIFIED;
+    emitter.emit(REQUEST_MODIFIED, requestObject);
+}
+
 module.exports = {
-    subscribeRequestAdded,
-    publishRequestAdded
+    subscribeRequestEvent,
+    publishRequestAdded,
+    publishRequestModified
 }

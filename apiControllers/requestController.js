@@ -9,6 +9,11 @@ var events = require('../event/events');
 
 var router = express.Router();
 
+var GenerateID=function(){
+    var day = new Date();
+    var timenow = day.getTime();
+    return timenow;
+}
 
 router.get('/', (req, res) => {
     requestRepo.loadAll()
@@ -23,9 +28,10 @@ router.get('/', (req, res) => {
 
 
 router.post('/', (req,res) => {
+    req.body.id = GenerateID();
     requestRepo.add(req.body)
         .then(value => {
-		//	console.log(value);
+        //	console.log(value);
 			res.statusCode = 201;
             res.json(req.body);
 
@@ -42,7 +48,9 @@ router.put('/', (req, res) => {
     requestRepo.update(req.body)
         .then(value=>{
             res.statusCode = 200;
-			res.json(req.body);
+            res.json(req.body);
+            
+            events.publishRequestModified(req.body);
         })
         .catch(err=>{
             console.log(err);

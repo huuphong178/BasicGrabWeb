@@ -18,27 +18,15 @@ var app = new Vue({
 			var item = self.list[index];
 			var str = item.id + " - " + item.name + " - " + item.phone + " - "
 				+ item.location + " - " + item.status + " - " + item.note + " - " + item.driver;
-			//alert(str);
-			var tempt = {
-				id: item.id,
-				name: 'name',
-				phone: 'phone',
-				address: 'address',
-				status: 'status',
-				note: 'note',
-				driver: 'driver_id'
+			// alert(str);
+			if(item.status != 2){
+				swal("Cảnh báo!", "Yêu cầu chưa được xác nhận", "error");
+			}else{
+				$('#myModal').modal('show');
+				myModal.loadModal(item.id);
 			}
-
-			var id = item.id;
-
-			self.list.forEach((c, i) => {
-				if(c.id == id){
-					console.log('ok');
-					console.log(i);
-					self.list.splice(i, 1, tempt);
-					return;
-				}
-			});
+			
+			
 		},
 		loadRequest: function(){
 			var self = this;
@@ -81,7 +69,7 @@ var app = new Vue({
 				return;
 			}
 
-			var src = new EventSource('http://localhost:3000/requestAddedEvent');
+			var src = new EventSource('http://localhost:3000/requestEvent');
 
 			src.onerror = function(e) {
 				console.log('error: ' + e);
@@ -90,6 +78,17 @@ var app = new Vue({
 			src.addEventListener('REQUEST_ADDED', (e) => {
 				var data = JSON.parse(e.data);
 				self.list.push(data);
+			}, false);
+
+			src.addEventListener('REQUEST_MODIFIED', (e) => {
+				var data = JSON.parse(e.data);
+				var id = data.id;
+				self.list.forEach((c, i) => {
+					if(c.id == id){
+						self.list.splice(i, 1, data);
+						return;
+					}
+				});
 			}, false);
 		}
 	},
@@ -105,4 +104,70 @@ var app = new Vue({
 			return this.list.sort(compare);
 		}
 	}
+});
+
+var myModal = new Vue({
+	el: "#myModal",
+	data: {
+		value: 'Đây là tiêu đề',
+		map: null,
+		directionsDisplay: null
+	},
+	methods: {
+		loadModal: function(id) {
+			var self = this;
+			var axiosInstance = axios.create({
+				baseURL: 'http://localhost:3000/request',
+				timeout: 15000
+			});
+			
+			axiosInstance.get('/minway/' + id)
+				.then((res) => {
+					console.log(res);
+					self.value = res.data;
+					//initMap();
+					var A = {lat: +res.data.driver_loX, lng: +res.data.driver_loY};
+					var B = {lat: +res.data.request_loX, lng: +res.data.request_loY};
+					self.direction(A, B);
+				}).catch((err) => {
+					console.log(err);
+				}).then(() => {
+
+				});
+		},
+		direction: function(A, B){
+			var self = this;
+			self.directionsDisplay = new google.maps.DirectionsRenderer({preserveViewport: true});
+			var directionsSvc = new google.maps.DirectionsService();
+			var center = {lat: (A.lat + B.lat)/2, lng: (A.lng + B.lng)/2}
+			self.map.setCenter(center);
+			self.directionsDisplay.setMap(self.map);
+			var directionsRequest = {
+				origin: A,
+				destination: B,
+				travelMode: google.maps.DirectionsTravelMode.DRIVING
+			};
+			
+			directionsSvc.route(directionsRequest, function(result, status){
+				if (status == google.maps.DirectionsStatus.OK){
+					self.directionsDisplay.setDirections(result);
+					self.map.setZoom(13);
+				}
+				else
+					alert(status);
+			});
+		}
+	}
+});
+
+function initMap() {
+	myModal.map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 13,
+		//center: { lat: 10.7624176, lng: 106.68119679999995 },
+		fullscreenControl: false
+	});
+}
+
+$('#myModal').on('hidden.bs.modal', function () {
+	myModal.directionsDisplay.setMap(null);
 })
