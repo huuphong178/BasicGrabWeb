@@ -9,13 +9,6 @@ exports.getRequest=id=>{
     var sql=`select * from request where id=${id}`;
     return db.excute(sql);
 }
-
-var GenerateID=function(){
-    var day = new Date();
-    var timenow = day.getTime();
-    return timenow;
-}
-
 var add=function(requestEntity){
     // requestEntity = {
     //     name: 'phong,
@@ -23,9 +16,10 @@ var add=function(requestEntity){
     //     address: 'quan 11',
     //     note: 'abc'
     // }
-    var id=GenerateID();
-    var sql=`insert into request(id, name, phone, address, note) values(${id},'${requestEntity.name}',
-    '${requestEntity.phone}','${requestEntity.address}','${requestEntity.note}')`;
+
+    var sql=`insert into request(id, name, phone, address, note, status, location_x, location_y, driver_id)
+     values(${requestEntity.id},'${requestEntity.name}','${requestEntity.phone}','${requestEntity.address}',
+    '${requestEntity.note}', ${requestEntity.status}, ${requestEntity.location_x}, ${requestEntity.location_y}, ${requestEntity.driver_id})`;
     return db.excute(sql);
 }
 exports.add=requestEntity=>{
