@@ -1,0 +1,160 @@
+#map {
+    height: 91.2%;
+    width: 81.7%;
+    margin-top: -1.5% !important;
+    margin-left: 18.3%;
+}
+.map1 {
+    margin-left: 18.3% !important;
+    transition: 0.5s;
+    width: 81.7% !important;
+}
+.map2 {
+    margin-left: 7.4% !important;
+    transition: 0.5s;
+    width: 92.5% !important;
+}
+
+.modal {
+    text-align: center;
+    padding: 0 !important;
+}
+
+.modal:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -4px;
+}
+
+.modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* Optional: Makes the sample page fill the window. */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#floating-panel {
+    position: absolute;
+    z-index: 1;
+}
+
+.navbar-default {
+    border-radius: 0px;
+    border: none;
+    z-index: 2;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        url("./image/bg-1.jpg");
+}
+
+@media (min-width: 768px) {
+    .navbar > .container .navbar-brand,
+    .navbar > .container-fluid .navbar-brand {
+        margin-left: -15px;
+        color: white;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidenav {
+        width: 100px !important;
+    }
+    div.navbar-header {
+        width: 100px;
+    }
+    ul.nav.navbar-nav,
+    li.iconBars,
+    a#toggleSideBar {
+        width: 50px !important;
+    }
+}
+
+li a {
+    color: white !important;
+}
+
+.small {
+    font-size: 5px !important;
+}
+
+.sidenav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("./image/bg-1.jpg");
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 16px;
+    color: white;
+    display: block;
+    transition: 0.3s;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    width: 85%;
+}
+
+.a1 {
+    width: 65% !important;
+}
+.small {
+    font-size: 10px !important;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+    border-radius: 4px;
+    background-color: #0bf;
+    border-color: #0bf;
+    padding-left: 20px;
+    margin-left: 18px;
+}
+
+#main {
+    transition: margin-left 0.5s;
+    padding: 16px;
+}
+
+@media screen and (max-height: 250px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+    .sidenav a {
+        font-size: 18px;
+    }
+}
+
+.icon {
+    font-size: 25px !important;
+}
+
+/* margin */
+.mt-7 {
+    margin-top: 7px !important;
+}
+
+.btn {
+    border: 0px;
+}
+.btn-info:hover {
+    color: #fff;
+    background-color: #31b0d5;
+    border: 0px;
+}

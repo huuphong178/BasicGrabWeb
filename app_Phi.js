@@ -1,24 +1,28 @@
-var express = require('express'),
-    bodyParser = require('body-parser'),
-    morgan = require('morgan'),
-    cors = require('cors');
+var express = require("express"),
+    bodyParser = require("body-parser"),
+    morgan = require("morgan"),
+    cors = require("cors");
 
 var app = express();
+var requestCtrl = require("./apiControllers/requestController");
+var driverCtrl = require("./apiControllers/driverController");
+var mapCtrl = require("./apiControllers/mapController");
 
-var requestCtrl = require('./apiControllers/requestController');
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(cors());
 
-app.get('/', (req, res) => {
-    res.json({
-        msg: 'hello from nodejs express api'
-    })
-});
+app.use("/request", requestCtrl);
+app.use("/driver", driverCtrl);
+app.use("/map", mapCtrl);
 
-app.use('/request', requestCtrl);
+app.get("/", (req, res) => {
+    res.json({
+        msg: "hello from nodejs express api"
+    });
+});
 
 var port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`PHI API is running on port ${port}`);
-})
+    console.log(`Grab API is running on port ${port}`);
+});
