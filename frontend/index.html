@@ -42,47 +42,16 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="#">Brand</a>
+					<a class="navbar-brand" href="#">REQUEST MANAGEMENT</a>
 				</div>
 		
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-						<li><a href="#">Link</a></li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown
-								<span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="#">Action</a></li>
-								<li><a href="#">Another action</a></li>
-								<li><a href="#">Something else here</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#">Separated link</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#">One more separated link</a></li>
-							</ul>
-						</li>
+						<li><a href="#"></a></li>
 					</ul>
-					<form class="navbar-form navbar-left">
-						<div class="form-group">
-							<input type="text" class="form-control" placeholder="Search">
-						</div>
-						<button type="submit" class="btn btn-default">Submit</button>
-					</form>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="#">Link</a></li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown
-								<span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="#">Action</a></li>
-								<li><a href="#">Another action</a></li>
-								<li><a href="#">Something else here</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#">Separated link</a></li>
-							</ul>
-						</li>
+						<li><a href="#">Đăng xuất</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			<!-- </div>/.container-fluid -->
@@ -93,17 +62,17 @@
 			<img src="https://image.bizlive.vn/670x350/uploaded/hoangly_tt/2017_06_02/go-ixe_-_banner-706x360_iyzr.jpg">
 		</div>
 		<div class="table-responsive" style="padding-top: 20px;" id="app">
-			<table class="table table-bordered table-hover">
+			<table class="table table-bordered table-hover table-striped">
 				<thead>
 					<tr>
-						<th style="width: 10%">#</th>
-						<th style="width: 15%">Name</th>
-						<th style="width: 10%">Phone</th>
-						<th style="width: 15%">Address</th>
-						<th style="width: 5%">Status</th>
-						<th style="width: 15%">Note</th>
-						<th style="width: 10%">Driver</th>
-						<th style="width: 20%">&nbsp;</th>
+						<th class="text-align-center" style="width: 10%">#</th>
+						<th class="text-align-center" style="width: 15%">Name</th>
+						<th class="text-align-center" style="width: 10%">Phone</th>
+						<th class="text-align-center" style="width: 25%">Address</th>
+						<th class="text-align-center" style="width: 5%">Status</th>
+						<th class="text-align-center" style="width: 20%">Note</th>
+						<th class="text-align-center" style="width: 10%">Driver</th>
+						<th class="text-align-center" style="width: 5%">&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -112,12 +81,12 @@
 						<td>{{item.name}}</td>
 						<td>{{item.phone}}</td>
 						<td>{{item.address}}</td>
-						<td>{{item.status}}</td>
+						<td class="text-align-center">{{item.status}}</td>
 						<td>{{item.note}}</td>
 						<td>{{item.driver}}</td>
 						<td style="text-align: center;">
 							<button type="button" class="btn btn-info" v-on:click="viewDetail(index)" style="width: 100%">
-								Detail
+								<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 							</button>
 						</td>
 					</tr>
