@@ -31,14 +31,11 @@
 
 	<div id="mySidenav" class="sidenav">
 		<!-- <legend></legend> -->
-		<a href="#" id="locate" class="sidebarA" data-toggle="modal" data-target="#locateModal" data-backdrop="static"
-		 data-keyboard="false"><i class="icon fas fa-search-location"></i><span class="sidebarTitle">&nbsp;
+		<a href="#" id="locate" class="sidebarA"><i class="icon fas fa-search-location"></i><span class="sidebarTitle">&nbsp;
 				&nbsp; Định
-				vị</span><span id="new" class="label label-success pull-right mt-7">New</span></a>
-		<a href="#" id="history" class="sidebarA" data-toggle="modal" data-target="#historyModal" data-backdrop="static"
-		 data-keyboard="false"><i class="icon fas fa-history"></i><span class="sidebarTitle">&nbsp; &nbsp;
-				Lịch sử định
-				vị</span></a>
+				vị</span><span id="new" class="label label-success pull-right mt-7" style="display: none">New</span></a>
+		<a href="#" id="history" class="sidebarA"><i class="icon fas fa-history"></i><span class="sidebarTitle">&nbsp; &nbsp;
+				Lịch sử định vị</span></a>
 	</div>
 	<div id="map"></div>
 
@@ -52,15 +49,14 @@
 					<h3 class="modal-title"><b><i class="fas fa-search-location"></i> Định vị ?</b></h3>
 				</div>
 				<div class="modal-body">
-					<span><b>Khách hàng:</b></span> Ngô Thanh Phi<br>
-					<span><b>Địa chỉ:</b></span> 227 Nguyễn Văn Cừ, phường 4, quận 5, thành phố Hồ Chí Minh, Việt Nam
+					<span><b>Khách hàng: </b></span>{{infoCustomer.name}}<br>
+					<span><b>Địa chỉ: </b></span>{{infoCustomer.address}}
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
 					<button id="real-locate" type="button" class="btn btn-success" data-dismiss="modal">Định vị</button>
 				</div>
 			</div>
-
 		</div>
 	</div>
 
@@ -85,12 +81,12 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>Ngô Thanh Phi</td>
-								<td>227 Nguyễn Văn Cừ, phường 4, quận 5, thành phố Hồ Chí Minh, Việt Nam</td>
+							<tr v-for="(item, index) in hisList">
+								<td>{{index+1}}</td>
+								<td>{{item.name}}</td>
+								<td>{{item.address}}</td>
 								<td>Tự động</td>
-								<td><button id="view-detail" class="btn btn-info">Xem</button></td>
+								<td><button class="btn btn-info" v-on:click="viewDetail(index)">Xem</button></td>
 							</tr>
 						</tbody>
 					</table>
@@ -103,12 +99,15 @@
 
 		</div>
 	</div>
+
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="phi_script.js"></script>
 	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA&callback=initMap">
 	</script>
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-	<script src="phi_script.js"></script>
 </body>
 
 </html>

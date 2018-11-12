@@ -1,9 +1,46 @@
 body{
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* background-color: rgb(235, 236, 230) */
 }
 
+.navbar-default{
+    font-weight: bold;
+    background-color: rgb(34, 87, 148)
+}
+
+.navbar-brand{
+    color: rgb(215, 215, 215) !important;
+}
+
+.navbar-brand:hover{
+    /* color: #000 !important; */
+    color: rgb(255, 255, 255) !important;
+}
+
+.navbar-nav>li>a {
+    color: rgb(215, 215, 215) !important;
+}
+.navbar-nav>li>a:hover {
+    color: rgb(255, 255, 255) !important;
+}
+
+.banner img {vertical-align: middle;}
 .banner{
-	text-align: center;
+    position: relative; 
+    max-width: 800px; /*Maximum width */
+    margin: 0 auto; /* Center it */
+}
+.banner .content-banner {
+    position: absolute; /* Position the background text */
+    bottom: 0; /* At the bottom. Use top:0 to append it to the top */
+    background: rgb(0, 0, 0); /* Fallback color */
+    background: rgba(0, 0, 0, 0.5); /* Black background with 0.5 opacity */
+    color: #f1f1f1; /* Grey text */
+    width: 100%; /* Full width */
+    /* padding: 20px; Some padding */
+    padding-left: 20px;
+    padding-bottom: 20px;
+    padding-top: 5px;
 }
 
 .text-align-center{
@@ -22,3 +59,13 @@ body{
 .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
 	background-color: #f5f5f5;
  }
+
+ .footer {
+    margin-top: 20px;
+    text-align: center;
+    height: 100px;
+    background-color: midnightblue;
+    color: white;
+    vertical-align : bottom;
+    padding-top: 50px;
+}

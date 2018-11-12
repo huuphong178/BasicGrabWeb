@@ -4,6 +4,13 @@ window.onload = function() {
 	app.loadRequest();
 }
 
+var navheader = new Vue({
+	el: "#nav",
+	data: {
+		isLogined: true
+	}
+})
+
 var app = new Vue({
 	el: "#app",
 	data: {
