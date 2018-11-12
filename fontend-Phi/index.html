@@ -1,113 +1,241 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Định Vị</title>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <meta charset="utf-8" />
 
-<head>
-	<title>Định Vị</title>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-	<meta charset="utf-8">
+        <!-- Latest compiled and minified CSS & JS -->
+        <link
+            rel="stylesheet"
+            media="screen"
+            href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+            integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="./phi_style.css" />
+    </head>
 
-	<!-- Latest compiled and minified CSS & JS -->
-	<link rel="stylesheet" media="screen" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
-	 crossorigin="anonymous">
-	<link rel="stylesheet" href="./phi_style.css">
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Định Vị</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li class="iconBars">
+                        <a href="#" id="toggleSideBar"
+                            ><i class="fas fa-bars"></i
+                        ></a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#"
+                            ><i class="icon far fa-user-circle"></i> Ngô Thanh
+                            Phi</a
+                        >
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-</head>
+        <div id="mySidenav" class="sidenav">
+            <!-- <legend></legend> -->
+            <a href="#" id="locate" class="sidebarA"
+                ><i class="icon fas fa-search-location"></i
+                ><span class="sidebarTitle">&nbsp; &nbsp; Định vị</span>
+                <span
+                    id="new"
+                    class="label label-success pull-right mt-7"
+                    style="display: none"
+                    >New</span
+                >
+                <span
+                    id="waiting"
+                    class="label label-warning pull-right mt-7"
+                    style="display: none"
+                    >Waiting</span
+                >
+                <span
+                    id="free"
+                    class="label label-default pull-right mt-7"
+                    style="display: inline"
+                    >Free</span
+                >
+            </a>
+            <a href="#" id="history" class="sidebarA"
+                ><i class="icon fas fa-history"></i
+                ><span class="sidebarTitle"
+                    >&nbsp; &nbsp; Lịch sử định vị</span
+                ></a
+            >
+        </div>
+        <div id="map"></div>
 
-<body>
-	<nav class="navbar navbar-default">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#">Định Vị</a>
-			</div>
-			<ul class="nav navbar-nav">
-				<li class="iconBars"><a href="#" id="toggleSideBar"><i class="fas fa-bars"></i></a></li>
-			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li><a href="#"><i class="icon far fa-user-circle"></i> Ngô Thanh Phi</a></li>
-			</ul>
-		</div>
-	</nav>
+        <!-- Locate Modal -->
+        <div id="locateModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">
+                            <b
+                                ><i class="fas fa-search-location"></i> Định vị
+                                ?</b
+                            >
+                        </h3>
+                    </div>
+                    <div class="modal-body">
+                        <span><b>Khách hàng: </b></span>{{ infoCustomer.name
+                        }}<br /><span><b>Số điện thoại: </b></span
+                        >{{ infoCustomer.phone }}<br />
+                        <span><b>Địa chỉ: </b></span>{{ infoCustomer.address }}
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-basic"
+                            data-dismiss="modal"
+                        >
+                            Đóng
+                        </button>
+                        <button
+                            id="real-locate"
+                            type="button"
+                            class="btn btn-success"
+                            data-dismiss="modal"
+                        >
+                            Định vị
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Locate Modal -->
 
-	<div id="mySidenav" class="sidenav">
-		<!-- <legend></legend> -->
-		<a href="#" id="locate" class="sidebarA"><i class="icon fas fa-search-location"></i><span class="sidebarTitle">&nbsp;
-				&nbsp; Định
-				vị</span><span id="new" class="label label-success pull-right mt-7" style="display: none">New</span></a>
-		<a href="#" id="history" class="sidebarA"><i class="icon fas fa-history"></i><span class="sidebarTitle">&nbsp; &nbsp;
-				Lịch sử định vị</span></a>
-	</div>
-	<div id="map"></div>
+        <!-- Relocate Modal -->
+        <div id="re-locateModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">
+                            <b
+                                ><i class="fas fa-search-location"></i> Định vị
+                                lại ?</b
+                            >
+                        </h3>
+                    </div>
+                    <div class="modal-body">
+                        <span
+                            ><b
+                                >Hệ thống không thể định vị được địa chỉ bên
+                                dưới, bạn có muốn tự định vị ? </b
+                            ><br />
+                            <b>(Nhấn vào bản đồ để chọn vị trí)</b></span
+                        ><br /><br />
+                        <span><b>Khách hàng: </b></span>{{ infoCustomer.name
+                        }}<br />
+                        <span><b>Số điện thoại: </b></span
+                        >{{ infoCustomer.phone }}<br />
+                        <span><b>Địa chỉ: </b></span>{{ infoCustomer.address }}
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            id="destroy-request"
+                            type="button"
+                            class="btn btn-danger"
+                            data-dismiss="modal"
+                        >
+                            Hủy yêu cầu
+                        </button>
+                        <button
+                            id="re-locate"
+                            type="button"
+                            class="btn btn-success"
+                            data-dismiss="modal"
+                        >
+                            Định vị lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Relocate Modal -->
 
-	<!-- Modal -->
-	<div id="locateModal" class="modal fade" role="dialog">
-		<div class="modal-dialog">
+        <!-- History Modal -->
+        <div id="historyModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">
+                            <b
+                                ><i class="icon fas fa-history"></i> Lịch sử
+                                định vị</b
+                            >
+                        </h3>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 7%;">STT</th>
+                                    <th style="width: 23%;">Khách hàng</th>
+                                    <th style="width: 50%;">Địa chỉ</th>
+                                    <th style="width: 20%;">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in hisList">
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.address }}</td>
+                                    <td>
+                                        <button
+                                            class="btn btn-info"
+                                            v-on:click="viewDetail(index)"
+                                            :disabled="item.status === 5"
+                                        >
+                                            Xem
+                                        </button>
+                                        <span v-if="item.status===5"
+                                            >Không định vị</span
+                                        >
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-default"
+                            data-dismiss="modal"
+                        >
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<h3 class="modal-title"><b><i class="fas fa-search-location"></i> Định vị ?</b></h3>
-				</div>
-				<div class="modal-body">
-					<span><b>Khách hàng: </b></span>{{infoCustomer.name}}<br>
-					<span><b>Địa chỉ: </b></span>{{infoCustomer.address}}
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-					<button id="real-locate" type="button" class="btn btn-success" data-dismiss="modal">Định vị</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Modal -->
-	<div id="historyModal" class="modal fade" role="dialog">
-		<div class="modal-dialog modal-lg">
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<h3 class="modal-title"><b><i class="icon fas fa-history"></i> Lịch sử định vị</b></h3>
-				</div>
-				<div class="modal-body">
-
-					<table class="table table-bordered table-hover">
-						<thead>
-							<tr>
-								<th>STT</th>
-								<th>Khách hàng</th>
-								<th>Địa chỉ</th>
-								<th>Hình thức</th>
-								<th>Hành động</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-for="(item, index) in hisList">
-								<td>{{index+1}}</td>
-								<td>{{item.name}}</td>
-								<td>{{item.address}}</td>
-								<td>Tự động</td>
-								<td><button class="btn btn-info" v-on:click="viewDetail(index)">Xem</button></td>
-							</tr>
-						</tbody>
-					</table>
-
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-				</div>
-			</div>
-
-		</div>
-	</div>
-
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-	<script src="phi_script.js"></script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA&callback=initMap">
-	</script>
-</body>
-
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="phi_script.js"></script>
+        <script
+            async
+            defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA&callback=initMap"
+        ></script>
+    </body>
 </html>

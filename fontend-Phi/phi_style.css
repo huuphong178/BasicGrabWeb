@@ -1,7 +1,7 @@
 #map {
     height: 91.2%;
     width: 81.7%;
-    margin-top: -1.5% !important;
+    margin-top: -2.1% !important;
     margin-left: 18.3%;
 }
 .map1 {
@@ -52,7 +52,7 @@ body {
     border: none;
     z-index: 2;
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-        url("./image/bg-1.jpg");
+        url("./image/bg-4.jpg");
 }
 
 @media (min-width: 768px) {
@@ -93,7 +93,7 @@ li a {
     top: 0;
     left: 0;
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-        url("./image/bg-1.jpg");
+        url("./image/bg-4.jpg");
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -112,7 +112,7 @@ li a {
 }
 
 .a1 {
-    width: 65% !important;
+    width: 80% !important;
 }
 .small {
     font-size: 10px !important;
@@ -157,4 +157,13 @@ li a {
     color: #fff;
     background-color: #31b0d5;
     border: 0px;
+}
+
+.new-status {
+    background: rgb(66, 183, 42);
+    border-radius: 50%;
+    display: inline-block;
+    height: 6px;
+    margin-left: 4px;
+    width: 6px;
 }
