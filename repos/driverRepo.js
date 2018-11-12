@@ -13,6 +13,11 @@ var Delete = (id) => {
             WHERE id_driver = ${id}`;
     return db.excute(sql);
 }
+exports.getCurrentDriver=id=>{
+    var sql=`select * from currentdriver where id_driver=${id}`;
+    return db.excute(sql);
+}
+
 exports.update = (id, status, location) => {
     return new Promise((resolve, reject) => {
         Delete(id)
