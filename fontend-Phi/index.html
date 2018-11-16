@@ -24,52 +24,80 @@
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#">Định Vị</a>
+                    <button
+                        type="button"
+                        class="navbar-toggle"
+                        data-toggle="collapse"
+                        data-target="#myNavbar"
+                    >
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" style="color: white;" href="#"
+                        >Định Vị</a
+                    >
                 </div>
-                <ul class="nav navbar-nav">
-                    <li class="iconBars">
-                        <a href="#" id="toggleSideBar"
-                            ><i class="fas fa-bars"></i
-                        ></a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="#"
-                            ><i class="icon far fa-user-circle"></i> Ngô Thanh
-                            Phi</a
-                        >
-                    </li>
-                </ul>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <li class="iconBars">
+                            <a id="toggleSideBar">
+                                <i class="fas fa-bars"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#"
+                                ><i class="icon far fa-user-circle"></i> Ngô
+                                Thanh Phi</a
+                            >
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
 
         <div id="mySidenav" class="sidenav">
             <!-- <legend></legend> -->
-            <a href="#" id="locate" class="sidebarA"
-                ><i class="icon fas fa-search-location"></i
+            <a id="locate" class="sidebarA-script"
+                ><i class="icon-script icon fas fa-search-location"></i
                 ><span class="sidebarTitle">&nbsp; &nbsp; Định vị</span>
                 <span
                     id="new"
-                    class="label label-success pull-right mt-7"
+                    class="label-script label label-success pull-right mt-7"
                     style="display: none"
                     >New</span
                 >
                 <span
+                    id="new-status"
+                    class="status new-status"
+                    style="display: none"
+                ></span>
+                <span
                     id="waiting"
-                    class="label label-warning pull-right mt-7"
+                    class="label-script label label-warning pull-right mt-7"
                     style="display: none"
                     >Waiting</span
                 >
                 <span
+                    id="waiting-status"
+                    class="status waiting-status"
+                    style="display: none"
+                ></span>
+                <span
                     id="free"
-                    class="label label-default pull-right mt-7"
+                    class="label-script label label-default pull-right mt-7"
                     style="display: inline"
                     >Free</span
-                >
+                ><span
+                    id="free-status"
+                    class="status free-status"
+                    style="display: none"
+                ></span>
             </a>
-            <a href="#" id="history" class="sidebarA"
-                ><i class="icon fas fa-history"></i
+            <a id="history" class="sidebarA-script"
+                ><i class="icon-script icon fas fa-history"></i
                 ><span class="sidebarTitle"
                     >&nbsp; &nbsp; Lịch sử định vị</span
                 ></a
@@ -225,12 +253,23 @@
             </div>
         </div>
 
+        <!-- Loader Modal -->
+        <div class="modal fade" id="loaderModal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content -->
+                <div class="modal-content transparent">
+                    <div class="modal-body text-center">
+                        <div class="loader loader-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
         <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="phi_script.js"></script>
         <script
             async

@@ -30,6 +30,18 @@ var axiosInstance = axios.create({
 window.onload = function() {
     // initListenEvent();
     setupWS();
+    let width = window.innerWidth - $("#mySidenav").width();
+    // if (window.innerWidth < 1242) width -= 20;
+    let height = window.innerHeight - $(".container-fluid").height();
+    // if (window.innerWidth < 845) height += 52.5;
+    // if (window.innerWidth < 929 && window.innerWidth > 845) height -= 52.5;
+
+    let margin_left = $("#mySidenav").width();
+    $("#map").css("margin-left", margin_left + "px");
+    $("#map").css("margin-top", "-20px");
+    $("#map").css("transition", "0.5s");
+    $("#map").css("width", width + "px");
+    $("#map").css("height", height + "px");
 };
 
 window.addEventListener("beforeunload", function(e) {
@@ -41,6 +53,17 @@ window.addEventListener("beforeunload", function(e) {
 
     ws.send(JSON.stringify(msg));
 });
+
+$(window).resize(function() {
+    let width = window.innerWidth - $("#mySidenav").width();
+    let height = window.innerHeight - $(".container-fluid").height();
+    // if (window.innerWidth < 845) height += 52.5;
+    // if (window.innerWidth < 929 && window.innerWidth > 845) height -= 52.5;
+    let margin_left = $("#mySidenav").width();
+    $("#map").css("margin-left", margin_left + "px");
+    $("#map").css("width", width + "px");
+    $("#map").css("height", height + "px");
+});
 // Done window
 
 // map
@@ -49,6 +72,7 @@ var marker;
 var newRequest = "free";
 var locator = "ntphi" + new Date().getTime();
 var clickOnMap = false;
+var toggle = true; // true: large, false: small
 
 var infowindow;
 
@@ -192,8 +216,13 @@ var setupWS = function() {
     };
 
     ws.onmessage = function(e) {
-        $("#free").css("display", "none");
-        $("#new").css("display", "inline");
+        if (toggle) {
+            $("#free").css("display", "none");
+            $("#new").css("display", "inline");
+        } else {
+            $("#free-status").css("display", "none");
+            $("#new-status").css("display", "inline-block");
+        }
         locateModal.loadModal(e.data);
         relocateModal.loadModal(e.data);
         newRequest = "new";
@@ -204,18 +233,34 @@ var setupWS = function() {
 // button click
 $("#toggleSideBar").click(() => {
     if ($("#mySidenav").width() !== 250) {
+        toggle = true;
         $("#mySidenav").css("width", "250px");
-        $("#map").removeClass("map2");
-        $("#map").addClass("map1");
         $(".sidebarTitle").css("display", "inline");
-        $(".sidebarA").removeClass("a1");
+        $(".sidebarA-script").removeClass("a1");
+        $(".icon-script").removeClass("icon-small");
+        $(".status").css("display", "none");
+        if (newRequest === "free") $("#free").css("display", "inline");
+        else if (newRequest === "new") $("#new").css("display", "inline");
+        else $("#waiting").css("display", "inline");
+        let width = window.innerWidth - 250;
+        $("#map").css("width", width + "px");
+        $("#map").css("margin-left", "250px");
     } else {
+        toggle = false;
         $("#mySidenav").css("width", "100px");
         $("#mySidenav").addClass("small");
-        $("#map").removeClass("map1");
-        $("#map").addClass("map2");
         $(".sidebarTitle").css("display", "none");
-        $(".sidebarA").addClass("a1");
+        $(".sidebarA-script").addClass("a1");
+        $(".icon-script").addClass("icon-small");
+        $(".label-script").css("display", "none");
+        if (newRequest === "free")
+            $("#free-status").css("display", "inline-block");
+        else if (newRequest === "new")
+            $("#new-status").css("display", "inline-block");
+        else $("#waiting-status").css("display", "inline-block");
+        let width = window.innerWidth - 100;
+        $("#map").css("width", width + "px");
+        $("#map").css("margin-left", "100px");
     }
 });
 
@@ -243,12 +288,20 @@ $("#history").click(() => {
 });
 
 $("#real-locate").click(() => {
-    $("#new").css("display", "none");
-    $("#waiting").css("display", "inline");
+    $("#loaderModal").modal({ backdrop: "static", keyboard: false });
+    if (toggle) {
+        $("#new").css("display", "none");
+        $("#waiting").css("display", "inline");
+    } else {
+        $("#new-status").css("display", "none");
+        $("#waiting-status").css("display", "inline-block");
+    }
     newRequest = "waiting";
+    marker.setMap(null);
     axiosInstance
         .get("/map/geocoding?address=" + locateModal.infoCustomer.address)
         .then(function(res) {
+            $("#loaderModal").modal("hide");
             // Lấy trường bên server (sendToLocator) để kiểm tra gửi trực tiếp hay từ db
             if (res.status == 200) {
                 marker.setMap(null);
@@ -258,6 +311,7 @@ $("#real-locate").click(() => {
             }
         })
         .catch(function(err) {
+            $("#loaderModal").modal("hide");
             $("#re-locateModal").modal({ backdrop: "static", keyboard: false });
         })
         .then(function() {});
@@ -296,8 +350,13 @@ function doneProcess_SendToServer(request) {
         .then(function(res) {
             marker.setDraggable(false);
             $("#doneProcess").css("display", "none");
-            $("#waiting").css("display", "none");
-            $("#free").css("display", "inline");
+            if (toggle) {
+                $("#waiting").css("display", "none");
+                $("#free").css("display", "inline");
+            } else {
+                $("#waiting-status").css("display", "none");
+                $("#free-status").css("display", "inline-block");
+            }
             newRequest = "free";
             locateModal.infoCustomer = {};
             var msg = {
@@ -305,7 +364,8 @@ function doneProcess_SendToServer(request) {
                     id: locator,
                     status: LocatorStatus.RANH,
                     // Nếu gửi trực tiếp thì thêm 1 trường qua server kiển tra coi xóa hay không xóa DB
-                    db: dbRequest
+                    db: dbRequest,
+                    data: request
                 }
             };
             var mess = JSON.stringify(msg);
@@ -327,27 +387,3 @@ function destroyRequest(type) {
     doneProcess_SendToServer(request);
 }
 // Done function
-
-// var initListenEvent = () => {
-//     if (typeof EventSource === "undefined") {
-//         console.log("not support");
-//         return;
-//     }
-
-//     var src = new EventSource("http://localhost:3000/requestEvent");
-
-//     src.onerror = function(e) {
-//         console.log("error: " + e);
-//     };
-
-//     // SSE
-//     // src.addEventListener(
-//     //     "REQUEST_ADDED",
-//     //     e => {
-//     //         $("#new").css("display", "inline");
-//     //         locateModal.loadModal(e.data);
-//     //         newRequest = true;
-//     //     },
-//     //     false
-//     // );
-// };

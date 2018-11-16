@@ -3,6 +3,7 @@ var requestqueueRepo = require("./../repos/requestqueueRepo");
 var RequestStatus = require("./../constants/requestStatus");
 var RequestQueueStatus = require("./../constants/requestQueueStatus");
 var LocatorStatus = require("./../constants/locatorStatus");
+// var wsForApp4 = require("./wsForApp4");
 
 var SOCKET_PORT = process.env.SOCKET_PORT || 40510;
 var socketServer;
@@ -19,6 +20,7 @@ if (!socketServer) {
                 console.log(`locator: ${msg.init.id} - ${msg.init.status}`);
                 ws.infoClient = msg.init;
                 console.log("Request Status: " + RequestStatus.CHUA_DINH_VI);
+                checkRequestInDB_SendToClient(msg.init.id);
             }
 
             if (msg.doneProcess) {
@@ -34,6 +36,12 @@ if (!socketServer) {
                         c.infoClient.status = msg.doneProcess.status;
                     }
                 }
+
+                // Gửi request to wsForApp4 nếu định vị thành công
+                // if (msg.doneProcess.data.status === 1) {
+                //     let json = JSON.stringify(msg.doneProcess.data);
+                //     wsForApp4.sendToDriver(json);
+                // }
 
                 // Kiểm tra trường bên client (doneProcess) gửi qua để coi có xóa trong db không
                 if (msg.doneProcess.db.check) {
@@ -98,7 +106,7 @@ var checkRequestInDB_SendToClient = function(id) {
             if (rows.length > 0) {
                 // Tìm locator
                 for (var c of socketServer.clients) {
-                    if (c.infoClient.id == id) {
+                    if (c.infoClient.id === id) {
                         //thuc hien gui request toi client
                         var msg = rows[0];
                         msg.db = true;
