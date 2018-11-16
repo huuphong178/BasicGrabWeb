@@ -3,7 +3,7 @@ var image = "./image/marker.png";
 var markermain;
 var infowindow;
 //set ID mat dinh
-var id_driver = 1540709441669;
+var id_driver = 1540695005611;
 var checkHaversine = true;
 
 function initMap() {
@@ -118,3 +118,31 @@ var updateLocation = function (id, location) {
                reject(err))
     })
 }
+
+
+window.onload = function() {
+    setupWS();
+};
+
+// WS
+var ws;
+
+var setupWS = function() {
+    window.WebSocket = window.WebSocket || window.MozWebSocket;
+    ws = new WebSocket("ws://localhost:40511");
+
+    ws.onopen = function() {
+        console.log("connected");
+        var msg = {
+            init: {
+                id: id_driver
+            }
+        };
+        ws.send(JSON.stringify(msg));
+    };
+
+    ws.onmessage = function(e) {
+        
+    };
+};
+// Done WS

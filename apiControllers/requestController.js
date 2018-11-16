@@ -7,6 +7,7 @@ var googleMapsClient = require("@google/maps").createClient({
 var moment = require("moment");
 var events = require("../event/events");
 var ws = require("./../ws/ws");
+var wsForApp4 = require("./../ws/wsforApp4");
 
 var router = express.Router();
 
