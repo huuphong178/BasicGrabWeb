@@ -192,3 +192,18 @@ input:checked+.slider:before {
     vertical-align : bottom;
     padding-top: 200px;
 }
+.actionTrip {
+    display: none;
+    position: fixed;
+    bottom: 15%;
+    left: 30%;
+    margin: 0 auto;
+    z-index: 99;
+}
+.actionTrip button{
+    width: 300px;
+    height: 50px;
+    font-weight: bold;
+    font-size: 20px;
+    
+}

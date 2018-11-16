@@ -3,7 +3,7 @@ var image = "./image/marker.png";
 var markermain;
 var infowindow;
 //set ID mat dinh
-var id_driver = 1540695005611;
+var id_driver = 1540709441669;
 var checkHaversine = true;
 
 function initMap() {
@@ -120,10 +120,8 @@ var updateLocation = function (id, location) {
 }
 
 
-window.onload = function() {
-    setupWS();
-};
 
+var status=1;
 // WS
 var ws;
 
@@ -135,14 +133,111 @@ var setupWS = function() {
         console.log("connected");
         var msg = {
             init: {
-                id: id_driver
+                id: id_driver,
+                status: status,
+                deny: []
             }
         };
         ws.send(JSON.stringify(msg));
     };
 
     ws.onmessage = function(e) {
+        console.log(e);
+        modalRequest.loadModal(e.data);
         
     };
+
+    ws.onclose = function(e){
+        console.log('WS closed');
+    }
 };
 // Done WS
+
+var actionTrip= new Vue({
+    el: "#actionTrip",
+    data: {
+        visable: false
+    },
+    methods: {
+        finishTrip: function(){
+            let self = this;
+            var msg={
+                finishMsg:modalRequest.infoCustomer
+                
+            }
+            console.log(msg);
+            var message=JSON.stringify(msg);
+            ws.send(message);
+            self.visable=false;
+        }
+    }
+   
+})
+var modalRequest = new Vue({
+    el: "#mymodalRequest",
+    data: {
+        infoCustomer: {}
+    },
+    methods: {
+        loadModal: function(infoCustomer) {
+            let self = this;
+            self.infoCustomer = JSON.parse(infoCustomer);
+            $('#mymodalRequest').modal("show");
+        },
+        denyModal: function(){
+            let self = this;
+            var msg={
+                denyMsg: self.infoCustomer
+            }
+            console.log(msg);
+            var message=JSON.stringify(msg);
+            ws.send(message);
+        },
+        accessModal: function(){
+            let self = this;
+            var msg={
+                accessMsg: self.infoCustomer
+            }
+            console.log(msg);
+            var message=JSON.stringify(msg);
+            ws.send(message);
+            $('#mymodalRequest').modal("hide");
+            actionTrip.visable=true;
+        }
+        
+    }
+});
+var switchStatus = function (checkbox) {
+    if (checkbox.checked) {
+        $.notify(
+            "On", "success",
+        );
+        updateStatus(id_driver, 1);
+        setupWS();
+    } else {
+        $.notify(
+            "Off", "error",
+        );
+        updateStatus(id_driver, 2);
+        ws.close();
+    }
+}
+
+//call Api updateStatus
+var updateStatus = function (id, status) {
+    var data = {
+        id: id,
+        status: status,
+    }
+    var instance = axios.create({
+        baseURL: 'http://localhost:3000/driver',
+        timeout: 3000
+    });
+
+    instance.put('/status', data)
+        .then(function (res) {
+            if (res.status === 200) {}
+        }).catch(function (err) {
+            console.log(err);
+        })
+}

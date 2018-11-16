@@ -1,20 +1,29 @@
 var db = require('../fn/mysql-db');
 
 var md5 = require('crypto-js/md5');
+var haversine = require('haversine');
+//sO LAn tim kiem driver
+var LOOP_FIND = 2;
+//Ban kinh tim driver
+var LIMIT_DISTANCE = 2000000; //meter
+
 
 exports.loadAll = () => {
     var sql = 'select * from currentdriver';
     return db.load(sql);
 }
-
+var loadDriverToSend = (id_request) => {
+    var sql = `SELECT * FROM currentdriver WHERE id_driver NOT IN (SELECT id_driver from blacklist WHERE id_request=${id_request})`;
+    return db.load(sql);
+}
 var Delete = (id) => {
     var sql = `DELETE
             FROM currentdriver
             WHERE id_driver = ${id}`;
     return db.excute(sql);
 }
-exports.getCurrentDriver=id=>{
-    var sql=`select * from currentdriver where id_driver=${id}`;
+exports.getCurrentDriver = id => {
+    var sql = `select * from currentdriver where id_driver=${id}`;
     return db.excute(sql);
 }
 
@@ -98,5 +107,63 @@ exports.login = loginEntity => {
     console.log(`pass:${md5_pwd}`);
     var sql = `select * from driver where username = '${loginEntity.username}' and password = '${md5_pwd}'`;
     return db.load(sql);
+
+}
+//Tra ra list driver thoa yeu cau
+var excuteHarversine = (locationRe, id_request) => {
+    return new Promise((resolve, reject) => {
+        loadDriverToSend(id_request)
+            .then(rows => {
+                if (rows.length > 0) {
+                    var resultbest = [];
+                    rows.forEach(element => {
+                        var locationDri = {
+                            latitude: element.location_X,
+                            longitude: element.location_Y
+                        };
+                        var Distance = haversine(locationDri, locationRe, {
+                            unit: 'meter'
+                        });
+                        if (Distance <= LIMIT_DISTANCE) {
+                            resultbest.push({
+                                id: element.id_driver,
+                                Distance: Distance
+                            })
+                        }
+
+                    });
+
+                    console.log(resultbest);
+                    return resultbest;
+                } else return [];
+            }).then(value => resolve(value))
+            .catch(err => reject(err));
+    })
+}
+
+//Tim driver gan nhat
+exports.findDriverBest = (locationRe, id_request) => {
+    return new Promise((resolve, reject) => {
+        excuteHarversine(locationRe, id_request)
+            .then(haversineDri => {
+                if (haversineDri.length > 0) {
+                    var minDri = haversineDri[0].Distance;
+                    var idDri = haversineDri[0].id;
+
+                    haversineDri.forEach(element => {
+                        if (element.Distance < minDri) {
+                            minDri = element.Distance;
+                            idDri = element.id;
+                        }
+                    })
+                    // return new Promise (resolve => resolve(idDri))
+                    return idDri;
+                } else
+                    return -1;
+                // return new Promise (reject => reject(-1))
+            })
+            .then(value => resolve(value))
+            .catch(value => reject(value))
+    })
 
 }

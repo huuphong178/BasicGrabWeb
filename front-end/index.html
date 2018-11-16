@@ -11,6 +11,47 @@
 </head>
 
 <body>
+    <!-- Modal -->
+    <div class="modal fade" id="mymodalRequest" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Thông tin cuốc xe</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="requestContent">
+
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                <h3>Họ tên</h3>
+                                <p>{{infoCustomer.name}}</p>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                    <h3>Số điện thoại</h3>
+                                    <p>{{infoCustomer.phone}}</p>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                    <h3>Địa chỉ</h3>
+                                    <p>{{infoCustomer.address}}</p>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                    <h3>Ghi chú</h3>
+                                    <p>{{infoCustomer.note}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"  v-on:click="denyModal()" class="btn btn-secondary" data-dismiss="modal">Từ chối</button>
+                    <button type="button" v-on:click="accessModal()" class="btn btn-success">Chấp nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div>
         <nav class="navbar navbar-default">
             <div class="container-fluid">
@@ -98,7 +139,13 @@
         <input type="checkbox" name="checkbox" onclick="switchStatus(this);">
         <span class="slider round"></span>
     </label>
-
+    <div class="actionTrip" id="actionTrip" >
+        
+        <button type="button" class="btn btn-success" v-if="visable">BẮT ĐẦU</button>
+        
+        <button type="button" class="btn btn-danger" v-if="visable" v-on:click="finishTrip();">KẾT THÚC</button>
+        
+    </div>
     <div id="map"></div>
     <button onclick="topFunction()" id="myBtnTop" title="Go to top">
         <span class="glyphicon glyphicon-menu-up"></span>
@@ -120,6 +167,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="js/notify.js"></script>
     <script src="js/index.app.js"></script>
     <script src="js/map.js"></script>
