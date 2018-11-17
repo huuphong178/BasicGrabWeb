@@ -67,44 +67,59 @@ if (!socketServer) {
 }
 
 var sendToDriver = msg => {
-    for (var c of socketServer.clients) {
-        if (c.readyState === WebSocket.OPEN) {
-                 mes = JSON.parse(msg);
-                 var locationRe={
-                    latitude: mes.location_x,
-                    longitude: mes.location_y
-                 }
-            var id_driver=driverRepo.findDriverBest(locationRe, mes.id)
-            if(c.infoClient.id===id_driver){
-                    console.log(mes);
+    var mes = JSON.parse(msg);
+    driverRepo.getDriverBest({
+        latitude: mes.location_x,
+        longitude: mes.location_y
+    }, mes.id).then(driver_id => {
+        for (var c of socketServer.clients) {
+            if (c.readyState === WebSocket.OPEN) {
+                if(c.infoClient.id === driver_id){
+                    console.log(`Send mess to ${driver_id}: ${mes}`);
                     c.send(msg);
                     return;
+                }
             }
-            // //Kiem tra trang thai ready
-            // if (+c.infoClient.status === 1) {
-            //     console.log(c.infoClient.id);
-            //     mes = JSON.parse(msg);
-            //     var checkDeny = false;
-            //     for (var deny of c.infoClient.deny) {
-            //         if (deny === mes.id) {
-            //             console.log('sai');
-            //             checkDeny = true;
-            //             break;
-            //         }
-            //     }
-
-            //     if (!checkDeny) {
-            //         msg = JSON.stringify(mes);
-            //         //console.log(mes);
-            //         c.send(msg);
-            //         //Cap nhat trang thai dang cho
-            //         c.infoClient.status = 0;
-            //         return;
-            //     }
-
-            // }
         }
-    }
+    });
+    // for (var c of socketServer.clients) {
+    //     if (c.readyState === WebSocket.OPEN) {
+    //              mes = JSON.parse(msg);
+    //              var locationRe={
+    //                 latitude: mes.location_x,
+    //                 longitude: mes.location_y
+    //              }
+    //         var id_driver=driverRepo.findDriverBest(locationRe, mes.id)
+    //         if(c.infoClient.id===id_driver){
+    //                 console.log(mes);
+    //                 c.send(msg);
+    //                 return;
+    //         }
+    //         // //Kiem tra trang thai ready
+    //         // if (+c.infoClient.status === 1) {
+    //         //     console.log(c.infoClient.id);
+    //         //     mes = JSON.parse(msg);
+    //         //     var checkDeny = false;
+    //         //     for (var deny of c.infoClient.deny) {
+    //         //         if (deny === mes.id) {
+    //         //             console.log('sai');
+    //         //             checkDeny = true;
+    //         //             break;
+    //         //         }
+    //         //     }
+
+    //         //     if (!checkDeny) {
+    //         //         msg = JSON.stringify(mes);
+    //         //         //console.log(mes);
+    //         //         c.send(msg);
+    //         //         //Cap nhat trang thai dang cho
+    //         //         c.infoClient.status = 0;
+    //         //         return;
+    //         //     }
+
+    //         // }
+    //     }
+    // }
 };
 
 module.exports = {

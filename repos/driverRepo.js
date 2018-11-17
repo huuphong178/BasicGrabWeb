@@ -13,7 +13,9 @@ exports.loadAll = () => {
     return db.load(sql);
 }
 var loadDriverToSend = (id_request) => {
-    var sql = `SELECT * FROM currentdriver WHERE id_driver NOT IN (SELECT id_driver from blacklist WHERE id_request=${id_request})`;
+    var sql = `SELECT * FROM currentdriver 
+        WHERE id_driver NOT IN (SELECT id_driver from blacklist WHERE id_request=${id_request})
+        AND status = 1`;
     return db.load(sql);
 }
 var Delete = (id) => {
@@ -142,7 +144,7 @@ var excuteHarversine = (locationRe, id_request) => {
 }
 
 //Tim driver gan nhat
-exports.findDriverBest = (locationRe, id_request) => {
+var findDriverBest = (locationRe, id_request) => {
     return new Promise((resolve, reject) => {
         excuteHarversine(locationRe, id_request)
             .then(haversineDri => {
@@ -165,5 +167,25 @@ exports.findDriverBest = (locationRe, id_request) => {
             .then(value => resolve(value))
             .catch(value => reject(value))
     })
+}
 
+exports.getDriverBest = async function (locationRequest, requestID) {
+    let check = false;
+    let result = -1;
+    for (let i = 0; i < 5000; i++) {
+        if (!check) {
+            await findDriverBest(locationRequest, requestID).then(value => {
+                console.log(value)
+                if (value != -1) {
+                    console.log('abcd');
+                    check = true;
+                    result = value;
+
+                }
+            });
+        } else { return result; }
+
+        console.log(i);
+    }
+	return result;
 }
