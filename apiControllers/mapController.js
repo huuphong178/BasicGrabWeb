@@ -1,6 +1,6 @@
 var express = require("express");
 var googleMapsClient = require("@google/maps").createClient({
-    key: "AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA",
+    key: "AIzaSyAF4NnJmtnjQIsG3cOP3Ci3-uJb0QCVr5E",
     Promise: Promise
 });
 
