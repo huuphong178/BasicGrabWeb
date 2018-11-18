@@ -3,15 +3,17 @@ var image = "./image/marker.png";
 var markermain;
 var infowindow;
 //set ID mat dinh
-var id_driver = 1540709441669;
+var id_driver = 1540695005611;
 var checkHaversine = true;
+var map = null;
+var directionsDisplay = null;
 
 function initMap() {
     khtn = {
         lat: 10.7624176,
         lng: 106.68119679999995
     };
-    var map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(document.getElementById("map"), {
         zoom: 16,
         center: khtn,
         fullscreenControl: false
@@ -162,13 +164,14 @@ var actionTrip= new Vue({
         finishTrip: function(){
             let self = this;
             var msg={
-                finishMsg:modalRequest.infoCustomer
-                
+                finishMsg: modalRequest.infoCustomer
             }
             console.log(msg);
             var message=JSON.stringify(msg);
             ws.send(message);
             self.visable=false;
+
+            directionsDisplay.setMap(null);
         }
     }
    
@@ -195,14 +198,78 @@ var modalRequest = new Vue({
         },
         accessModal: function(){
             let self = this;
-            var msg={
-                accessMsg: self.infoCustomer
-            }
-            console.log(msg);
-            var message=JSON.stringify(msg);
-            ws.send(message);
-            $('#mymodalRequest').modal("hide");
-            actionTrip.visable=true;
+
+            var axiosInstance = axios.create({
+				baseURL: 'http://localhost:3000/driver',
+				timeout: 15000
+			});
+			
+			axiosInstance.get('/' + id_driver)
+				.then((res) => {
+					console.log(res);
+					var currentDriverInfo = res.data;
+                    var A = {lat: +currentDriverInfo.location_X, lng: +currentDriverInfo.location_Y};
+                    var B = {lat: +self.infoCustomer.location_x, lng: +self.infoCustomer.location_y};
+                    
+                    self.direction(A, B);
+				}).catch((err) => {
+					console.log(err);
+				}).then(() => {
+
+				});
+
+
+
+            // console.log(msg);
+            // var message=JSON.stringify(msg);
+            // ws.send(message);
+            // $('#mymodalRequest').modal("hide");
+            // actionTrip.visable=true;
+        },
+        direction: function(A, B){
+            let self = this;
+            //var markerOption = new google.maps.Marker({icon: image});
+			directionsDisplay = new google.maps.DirectionsRenderer({preserveViewport: true});
+            var directionsSvc = new google.maps.DirectionsService();
+            var center = {lat: (A.lat + B.lat)/2, lng: (A.lng + B.lng)/2};
+            map.setCenter(center);
+            directionsDisplay.setMap(map);
+
+            var directionsRequest = {
+				origin: A,
+				destination: B,
+				travelMode: google.maps.DirectionsTravelMode.DRIVING
+            };
+
+            console.log(directionsRequest);
+
+            directionsSvc.route(directionsRequest, function(result, status){
+				if (status == google.maps.DirectionsStatus.OK){
+					directionsDisplay.setDirections(result);
+                    map.setZoom(14);
+                    
+                    google.maps.event.addListener(directionsDisplay, 'click', function (event) {
+                        addMarker({
+                            lat: event.latLng.lat(),
+                            lng: event.latLng.lng()
+                        }, directionsDisplay);
+                
+                    });
+
+                    //Show <Bat dau> <Ket thuc>
+                    var msg={
+                        accessMsg: self.infoCustomer
+                    }
+
+                    console.log(msg);
+                    var message=JSON.stringify(msg);
+                    ws.send(message);
+                    $('#mymodalRequest').modal("hide");
+                    actionTrip.visable=true;
+                }
+				else
+					alert(status);
+			});
         }
         
     }
@@ -218,6 +285,7 @@ var switchStatus = function (checkbox) {
         $.notify(
             "Off", "error",
         );
+        directionsDisplay.setMap(null);
         updateStatus(id_driver, 2);
         ws.close();
     }

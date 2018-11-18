@@ -136,4 +136,23 @@ router.get('/', (req, res) => {
 	// 	})
 })
 
+router.get('/:driverID',(req, res) => {
+	var id = req.params.driverID;
+	driverRepo.getCurrentDriver(id)
+		.then(rows => {
+			if (rows.length > 0) {
+                var currentDriverInfo = rows[0];
+                res.statusCode = 200;
+                res.json(currentDriverInfo);
+            } else {
+                res.statusCode = 204;
+            }
+		})
+		.catch(err => {
+			console.log(err);
+            res.statusCode = 500;
+            res.end("View error log on console");
+		});
+})
+
 module.exports = router;
