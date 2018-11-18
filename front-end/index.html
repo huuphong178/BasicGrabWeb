@@ -141,9 +141,9 @@
     </label>
     <div class="actionTrip" id="actionTrip" >
         
-        <button type="button" class="btn btn-success" v-if="visable">BẮT ĐẦU</button>
+        <button type="button" class="btn btn-success" v-if="visable" v-on:click="startTrip();" :disabled="disabled">BẮT ĐẦU</button>
         
-        <button type="button" class="btn btn-danger" v-if="visable" v-on:click="finishTrip();">KẾT THÚC</button>
+        <button type="button" class="btn btn-danger" v-if="visable" v-on:click="finishTrip();" >KẾT THÚC</button>
         
     </div>
     <div id="map"></div>
@@ -171,7 +171,7 @@
     <script src="js/notify.js"></script>
     <script src="js/index.app.js"></script>
     <script src="js/map.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF4NnJmtnjQIsG3cOP3Ci3-uJb0QCVr5E&callback=initMap"
         async defer></script>
 </body>
 

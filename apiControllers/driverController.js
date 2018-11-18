@@ -3,6 +3,7 @@ var driverRepo = require('../repos/driverRepo');
 var authRepo = require('../repos/authRepo');
 var haversine = require('haversine');
 var router = express.Router();
+var blacklistRepo = require("../repos/blacklistRepo");
 
 router.put('/', (req, res) => {
 	var id = req.body.id;
@@ -85,55 +86,23 @@ router.put('/location', (req, res) => {
 //router.use(authRepo.verifyAccessTokenAdmin);
 
 router.get('/', (req, res) => {
-	// driverRepo.findDriverBest({
-	// 	latitude: 18.7624178,
-	// 	longitude: 106.68119679999999
-	// }, 12).then(value=>{
-	// 	console.log(1);
-	// 	res.json(value);
-	// 	//res.json('value');
-	// }).catch(err=>{
-	// 	console.log(2);
-	// })
-	const getNumbers=async function loop() {
-		let check=false;
-		let result=-1;
-		for (let i = 0; i < 5000; i++) {
-			
-			if(!check){
-				await driverRepo.findDriverBest({
-					latitude: 18.7624178,
-					longitude: 106.68119679999999
-				}, req.query.id).then(value => {
-					
-					console.log(value)
-					if(value!=-1) {
-						console.log('abcd');
-						check=true;
-						result=value;
-						
-						 }
-				});
-			}else{return result;}
-			
-			console.log(i);
-		}
-		return result;
-		//res.json(result);
-	};
-	getNumbers().then(v=>{
-		console.log(v);
-		res.json(v);
-	})
-	
-	// driverRepo.loadAll()
-	// 	.then(rows => {
-	// 		res.json(rows);
-	// 	}).catch(err => {
-	// 		console.log(err);
-	// 		res.statusCode = 500;
-	// 		res.end('View error log on console');
-	// 	})
+	driverRepo.loadAll()
+		.then(rows => {
+			res.json(rows);
+		}).catch(err => {
+			console.log(err);
+			res.statusCode = 500;
+			res.end('View error log on console');
+		})
 })
-
+router.delete('/blacklist', (req, res) => {
+	blacklistRepo.delete(req.body.id).then(value => {
+		console.log('Delete blacklist success');
+		res.json(req.body.id);
+	}).catch(err => {
+		console.log(err);
+			res.statusCode = 500;
+			res.end('View error log on console');
+	})
+})
 module.exports = router;

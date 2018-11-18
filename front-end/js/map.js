@@ -6,6 +6,7 @@ var infowindow;
 var id_driver = 1540709441669;
 var checkHaversine = true;
 
+
 function initMap() {
     khtn = {
         lat: 10.7624176,
@@ -43,7 +44,7 @@ function initMap() {
     //     alert('dung');
 
     // });
-    
+
     // Add a marker at the center of the map.
     addMarker(khtn, map);
 }
@@ -51,21 +52,21 @@ function initMap() {
 // Adds a marker to the map.
 function addMarker(location, map) {
     console.log(location);
-    updateLocation(id_driver, location).then(value=>{
-        if(value===true){
+    updateLocation(id_driver, location).then(value => {
+        if (value === true) {
             deleteMarkers();
-                // Add the marker at the clicked location, and add the next-available label
-                // from the array of alphabetical characters.
-                markermain = new google.maps.Marker({
-                    position: location,
-                    //label: labels[labelIndex++ % labels.length],
-                    draggable: true,
-                    animation: google.maps.Animation.DROP,
-                    map: map,
-                    icon: image
-                });
-                infowindow.open(map, markermain);
-        }else {
+            // Add the marker at the clicked location, and add the next-available label
+            // from the array of alphabetical characters.
+            markermain = new google.maps.Marker({
+                position: location,
+                //label: labels[labelIndex++ % labels.length],
+                draggable: true,
+                animation: google.maps.Animation.DROP,
+                map: map,
+                icon: image
+            });
+            infowindow.open(map, markermain);
+        } else {
             alert('Vị trí chọn lớn hơn 100m');
         }
     })
@@ -85,14 +86,14 @@ function toggleBounce() {
 // Sets the map on all markers in the array.
 
 // Deletes all markers in the array by removing references to them.
-function deleteMarkers(){
-    if (markermain != null) 
+function deleteMarkers() {
+    if (markermain != null)
         markermain.setMap(null);
     markermain = null;
 }
 //call api updateLocation
 var updateLocation = function (id, location) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         var data = {
             id: id,
             location_X: location.lat,
@@ -102,7 +103,7 @@ var updateLocation = function (id, location) {
             baseURL: 'http://localhost:3000/driver',
             timeout: 3000
         });
-    
+
         instance.put('/location', data)
             .then(function (res) {
                 if (res.status === 200) {
@@ -114,22 +115,22 @@ var updateLocation = function (id, location) {
                 }
             })
             .then(value => resolve(value))
-            .catch(err=> 
-               reject(err))
+            .catch(err =>
+                reject(err))
     })
 }
 
 
 
-var status=1;
+var status = 1;
 // WS
 var ws;
 
-var setupWS = function() {
+var setupWS = function () {
     window.WebSocket = window.WebSocket || window.MozWebSocket;
     ws = new WebSocket("ws://localhost:40511");
 
-    ws.onopen = function() {
+    ws.onopen = function () {
         console.log("connected");
         var msg = {
             init: {
@@ -141,37 +142,44 @@ var setupWS = function() {
         ws.send(JSON.stringify(msg));
     };
 
-    ws.onmessage = function(e) {
+    ws.onmessage = function (e) {
         console.log(e);
         modalRequest.loadModal(e.data);
-        
+
     };
 
-    ws.onclose = function(e){
+    ws.onclose = function (e) {
         console.log('WS closed');
     }
 };
 // Done WS
 
-var actionTrip= new Vue({
+var actionTrip = new Vue({
     el: "#actionTrip",
     data: {
-        visable: false
+        visable: false,
+        disabled: false
     },
     methods: {
-        finishTrip: function(){
+        finishTrip: function () {
             let self = this;
-            var msg={
-                finishMsg:modalRequest.infoCustomer
-                
+            var msg = {
+                finishMsg: modalRequest.infoCustomer
+
             }
             console.log(msg);
-            var message=JSON.stringify(msg);
+            var message = JSON.stringify(msg);
             ws.send(message);
-            self.visable=false;
+            self.visable = false;
+            self.disabled = false;
+
+        },
+        startTrip: function () {
+            let self = this;
+            self.disabled = true;
         }
     }
-   
+
 })
 var modalRequest = new Vue({
     el: "#mymodalRequest",
@@ -179,32 +187,32 @@ var modalRequest = new Vue({
         infoCustomer: {}
     },
     methods: {
-        loadModal: function(infoCustomer) {
+        loadModal: function (infoCustomer) {
             let self = this;
             self.infoCustomer = JSON.parse(infoCustomer);
             $('#mymodalRequest').modal("show");
         },
-        denyModal: function(){
+        denyModal: function () {
             let self = this;
-            var msg={
+            var msg = {
                 denyMsg: self.infoCustomer
             }
             console.log(msg);
-            var message=JSON.stringify(msg);
+            var message = JSON.stringify(msg);
             ws.send(message);
         },
-        accessModal: function(){
+        accessModal: function () {
             let self = this;
-            var msg={
+            var msg = {
                 accessMsg: self.infoCustomer
             }
             console.log(msg);
-            var message=JSON.stringify(msg);
+            var message = JSON.stringify(msg);
             ws.send(message);
             $('#mymodalRequest').modal("hide");
-            actionTrip.visable=true;
+            actionTrip.visable = true;
         }
-        
+
     }
 });
 var switchStatus = function (checkbox) {
@@ -241,3 +249,32 @@ var updateStatus = function (id, status) {
             console.log(err);
         })
 }
+var deleteBlackList = function () {
+    var instance = axios.create({
+        baseURL: 'http://localhost:3000/driver',
+        timeout: 3000
+    });
+    const data = {
+        id: id_driver
+    }
+    console.log(data);
+    instance.delete('/blacklist', {
+            data: data
+        })
+        .then(function (res) {
+            if (res.status === 200) {
+                alert("success");
+                return true;
+            }
+
+        })
+        .catch(err =>
+            reject(err))
+
+}
+window.addEventListener("beforeunload", function (event) {
+    event.returnValue = "Write something clever here..";
+});
+window.addEventListener("unload", function (event) {
+    deleteBlackList()
+});
