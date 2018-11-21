@@ -175,7 +175,7 @@ exports.getDriverBest = async function (locationRequest, requestID) {
     for (let i = 0; i < 5000; i++) {
         if (!check) {
             await findDriverBest(locationRequest, requestID).then(value => {
-                console.log(value)
+                console.log(`id_driver: ${value} được chọn để gửi` )
                 if (value != -1) {
                     console.log('abcd');
                     check = true;

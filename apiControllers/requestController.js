@@ -57,11 +57,8 @@ router.put("/", (req, res) => {
         .then(value => {
             res.statusCode = 200;
             res.json(req.body);
+ events.publishRequestModified(req.body);
 
-            events.publishRequestModified(req.body);
-            //test driver
-            var json = JSON.stringify(req.body);
-            wsForApp4.sendToDriver(json);
         })
         .catch(err => {
             console.log(err);

@@ -5,23 +5,45 @@ var infowindow;
 //set ID mat dinh
 var id_driver = 1540709441669;
 var checkHaversine = true;
+var map = null;
+var directionsDisplay = null;
+const TIME_REQUEST = 10;
+var second = TIME_REQUEST;
+var timer;
+var fn = function () {
+    time.second.value = second--;
+    if (second == -1) {
+        time.second.value = 0;
+        modalRequest.denyModal();
+        $('#mymodalRequest').modal("hide");
+        clearInterval(timer);
+
+    }
+}
+var start = function () {
+    time.second.value = TIME_REQUEST;
+    second = TIME_REQUEST
+    timer = setInterval(fn, 1000);
+}
+var stop = function () {
+    clearInterval(timer);
+}
 
 function initMap() {
     khtn = {
         lat: 10.7624176,
         lng: 106.68119679999995
     };
-    var map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(document.getElementById("map"), {
         zoom: 16,
         center: khtn,
-        fullscreenControl: false
     });
     markermain = new google.maps.Marker({
-        position: khtn,
-        draggable: true,
-        animation: google.maps.Animation.DROP,
-        map: map,
-        icon: image
+        // position: khtn,
+        // draggable: true,
+        // animation: google.maps.Animation.DROP,
+        // map: map,
+        // icon: image
     });
     infowindow = new google.maps.InfoWindow({
         content: "Bạn đang ở đây !"
@@ -34,46 +56,60 @@ function initMap() {
         }, map);
 
     });
-    // google.maps.event.addListener(markermain, 'dragend', function () {
-    //     // addMarker({
-    //     //     lat: this.getPosition().lat(),
-    //     //     lng: this.getPosition().lng()
-    //     // }, map);
-    //     console.log(this.getPosition());
-    //     alert('dung');
-
-    // });
-    
+    getMarkerFirst(map);
     // Add a marker at the center of the map.
-    addMarker(khtn, map);
+   // addMarker(khtn, map);
+   //dragen event of marker
 }
+function getMarkerFirst(map){
+    var axiosInstance = axios.create({
+        baseURL: 'http://localhost:3000/driver',
+        timeout: 15000
+    });
 
+    axiosInstance.get('/' + id_driver)
+        .then((res) => {
+            console.log(res);
+            var currentDriverInfo = res.data;
+            var location = {
+                lat: +currentDriverInfo.location_X,
+                lng: +currentDriverInfo.location_Y
+            };
+            markermain = new google.maps.Marker({
+                position: location,
+                draggable: false,
+                animation: google.maps.Animation.DROP,
+                map: map,
+                icon: image
+            });
+            infowindow.open(map, markermain);
+        }).catch((err) => {
+            console.log(err);
+        })
+}
 // Adds a marker to the map.
 function addMarker(location, map) {
     console.log(location);
-    updateLocation(id_driver, location).then(value=>{
-        if(value===true){
+    updateLocation(id_driver, location).then(value => {
+        if (value === true) {
             deleteMarkers();
-                // Add the marker at the clicked location, and add the next-available label
-                // from the array of alphabetical characters.
-                markermain = new google.maps.Marker({
-                    position: location,
-                    //label: labels[labelIndex++ % labels.length],
-                    draggable: true,
-                    animation: google.maps.Animation.DROP,
-                    map: map,
-                    icon: image
-                });
-                infowindow.open(map, markermain);
-        }else {
+            // Add the marker at the clicked location, and add the next-available label
+            // from the array of alphabetical characters.
+            markermain = new google.maps.Marker({
+                position: location,
+                //label: labels[labelIndex++ % labels.length],
+                draggable: false,
+                animation: google.maps.Animation.DROP,
+                map: map,
+                icon: image
+            });
+            infowindow.open(map, markermain);
+        } else {
             alert('Vị trí chọn lớn hơn 100m');
         }
     })
     markermain.addListener('click', toggleBounce);
-    markermain.addListener('drag', toggleBounce);
-    markermain.addListener('dragend', toggleBounce);
 }
-
 function toggleBounce() {
     infowindow.open(map, markermain);
     if (markermain.getAnimation() !== null) {
@@ -85,14 +121,14 @@ function toggleBounce() {
 // Sets the map on all markers in the array.
 
 // Deletes all markers in the array by removing references to them.
-function deleteMarkers(){
-    if (markermain != null) 
+function deleteMarkers() {
+    if (markermain != null)
         markermain.setMap(null);
     markermain = null;
 }
 //call api updateLocation
 var updateLocation = function (id, location) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         var data = {
             id: id,
             location_X: location.lat,
@@ -102,7 +138,7 @@ var updateLocation = function (id, location) {
             baseURL: 'http://localhost:3000/driver',
             timeout: 3000
         });
-    
+
         instance.put('/location', data)
             .then(function (res) {
                 if (res.status === 200) {
@@ -114,22 +150,22 @@ var updateLocation = function (id, location) {
                 }
             })
             .then(value => resolve(value))
-            .catch(err=> 
-               reject(err))
+            .catch(err =>
+                reject(err))
     })
 }
 
 
 
-var status=1;
+var status = 1;
 // WS
 var ws;
 
-var setupWS = function() {
+var setupWS = function () {
     window.WebSocket = window.WebSocket || window.MozWebSocket;
     ws = new WebSocket("ws://localhost:40511");
 
-    ws.onopen = function() {
+    ws.onopen = function () {
         console.log("connected");
         var msg = {
             init: {
@@ -141,37 +177,46 @@ var setupWS = function() {
         ws.send(JSON.stringify(msg));
     };
 
-    ws.onmessage = function(e) {
+    ws.onmessage = function (e) {
         console.log(e);
         modalRequest.loadModal(e.data);
-        
+        start();
     };
 
-    ws.onclose = function(e){
+    ws.onclose = function (e) {
         console.log('WS closed');
     }
 };
 // Done WS
 
-var actionTrip= new Vue({
+var actionTrip = new Vue({
     el: "#actionTrip",
     data: {
-        visable: false
+        visable: false,
+        disabled: false
     },
     methods: {
-        finishTrip: function(){
+        finishTrip: function () {
             let self = this;
-            var msg={
-                finishMsg:modalRequest.infoCustomer
-                
-            }
-            console.log(msg);
-            var message=JSON.stringify(msg);
-            ws.send(message);
-            self.visable=false;
+            self.visable = false;
+            self.disabled = false;
+            directionsDisplay.setMap(null);
+            //Cap nhat trang thai request da co xe nhan
+            modalRequest.infoCustomer.status = 4;
+            updateStatusRequest(modalRequest.infoCustomer);
+            //Cap nhat trang thai ready
+            updateStatus(id_driver, 1)
+
+        },
+        startTrip: function () {
+            let self = this;
+            self.disabled = true;
+            //Cap nhat trang thai request da co xe nhan
+            modalRequest.infoCustomer.status = 3;
+            updateStatusRequest(modalRequest.infoCustomer);
         }
     }
-   
+
 })
 var modalRequest = new Vue({
     el: "#mymodalRequest",
@@ -179,32 +224,115 @@ var modalRequest = new Vue({
         infoCustomer: {}
     },
     methods: {
-        loadModal: function(infoCustomer) {
+        loadModal: function (infoCustomer) {
             let self = this;
             self.infoCustomer = JSON.parse(infoCustomer);
             $('#mymodalRequest').modal("show");
         },
-        denyModal: function(){
+        denyModal: function () {
+            stop();
             let self = this;
-            var msg={
-                denyMsg: self.infoCustomer
+            var instanceStatus = axios.create({
+                baseURL: 'http://localhost:3000/driver',
+                timeout: 3000
+            });
+            var blacklistEntity = {
+                id_driver: id_driver,
+                id_request: self.infoCustomer.id
             }
-            console.log(msg);
-            var message=JSON.stringify(msg);
-            ws.send(message);
+            instanceStatus.post('/blacklist', blacklistEntity)
+                .then(function (res) {
+                    if (res.status === 200) {
+                        var msg = {
+                            msgResend: self.infoCustomer
+                        };
+                        ws.send(JSON.stringify(msg));
+                    }
+                })
+                .catch(err => console.log(err))
+           
         },
-        accessModal: function(){
+        accessModal: function () {
+            stop();
             let self = this;
-            var msg={
-                accessMsg: self.infoCustomer
-            }
-            console.log(msg);
-            var message=JSON.stringify(msg);
-            ws.send(message);
-            $('#mymodalRequest').modal("hide");
-            actionTrip.visable=true;
+
+            var axiosInstance = axios.create({
+                baseURL: 'http://localhost:3000/driver',
+                timeout: 15000
+            });
+
+            axiosInstance.get('/' + id_driver)
+                .then((res) => {
+                    console.log(res);
+                    var currentDriverInfo = res.data;
+                    var A = {
+                        lat: +currentDriverInfo.location_X,
+                        lng: +currentDriverInfo.location_Y
+                    };
+                    var B = {
+                        lat: +self.infoCustomer.location_x,
+                        lng: +self.infoCustomer.location_y
+                    };
+
+                    self.direction(A, B);
+                }).catch((err) => {
+                    console.log(err);
+                }).then(() => {});
+            //Cap nhat status cua request va driver
+            self.infoCustomer.status = 2;
+            updateStatusRequest(self.infoCustomer);
+            updateStatus(id_driver, 3)
+        },
+        direction: function (A, B) {
+            let self = this;
+            //var markerOption = new google.maps.Marker({icon: image});
+            directionsDisplay = new google.maps.DirectionsRenderer({
+                preserveViewport: true
+            });
+            var directionsSvc = new google.maps.DirectionsService();
+            var center = {
+                lat: (A.lat + B.lat) / 2,
+                lng: (A.lng + B.lng) / 2
+            };
+            map.setCenter(center);
+            directionsDisplay.setMap(map);
+
+            var directionsRequest = {
+                origin: A,
+                destination: B,
+                travelMode: google.maps.DirectionsTravelMode.DRIVING
+            };
+
+            console.log(directionsRequest);
+
+            directionsSvc.route(directionsRequest, function (result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(result);
+                    map.setZoom(14);
+
+                    google.maps.event.addListener(directionsDisplay, 'click', function (event) {
+                        addMarker({
+                            lat: event.latLng.lat(),
+                            lng: event.latLng.lng()
+                        }, directionsDisplay);
+
+                    });
+
+                    //Show <Bat dau> <Ket thuc>
+                    var msg = {
+                        accessMsg: self.infoCustomer
+                    }
+
+                    console.log(msg);
+                    var message = JSON.stringify(msg);
+                    ws.send(message);
+                    $('#mymodalRequest').modal("hide");
+                    actionTrip.visable = true;
+                } else
+                    alert(status);
+            });
         }
-        
+
     }
 });
 var switchStatus = function (checkbox) {
@@ -218,12 +346,17 @@ var switchStatus = function (checkbox) {
         $.notify(
             "Off", "error",
         );
+        if (directionsDisplay) {
+            directionsDisplay.setMap(null);
+        }
         updateStatus(id_driver, 2);
         ws.close();
+      //  map.setClickableIcons(false);
+       // map.clickableIcons=false;
     }
 }
 
-//call Api updateStatus
+//call Api updateStatusDriver
 var updateStatus = function (id, status) {
     var data = {
         id: id,
@@ -241,3 +374,45 @@ var updateStatus = function (id, status) {
             console.log(err);
         })
 }
+//call Api updateStatusRequest
+var updateStatusRequest = function (requestEntity) {
+    var instance = axios.create({
+        baseURL: 'http://localhost:3000/request',
+        timeout: 3000
+    });
+    instance.put('/', requestEntity)
+        .then(function (res) {
+            if (res.status === 200) {}
+        }).catch(function (err) {
+            console.log(err);
+        })
+}
+var deleteBlackList = function () {
+    var instance = axios.create({
+        baseURL: 'http://localhost:3000/driver',
+        timeout: 3000
+    });
+    const data = {
+        id: id_driver
+    }
+    console.log(data);
+    instance.delete('/blacklist', {
+            data: data
+        })
+        .then(function (res) {
+            if (res.status === 200) {
+                alert("success");
+                return true;
+            }
+
+        })
+        .catch(err => reject(err))
+
+}
+
+window.addEventListener("beforeunload", function (event) {
+    event.returnValue = "Write something clever here..";
+});
+window.addEventListener("unload", function (event) {
+    deleteBlackList()
+});
