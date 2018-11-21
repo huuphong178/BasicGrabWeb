@@ -21,9 +21,13 @@ const INVALID_ADDRESS_BY_SYSTEM =
     "Địa chỉ không hợp lệ - Hệ thống không thể định vị";
 const INVALID_ADDRESS_BY_USER = "Địa chỉ không hợp lệ - Nhân viên hủy yêu cầu";
 
+var keyAccessToken = "accessToken";
+var keyRefreshToken = "refreshToken";
+
 var axiosInstance = axios.create({
     baseURL: "http://localhost:3000",
-    timeout: 10000
+    timeout: 10000,
+    headers: { "x-access-token": localStorage.getItem(keyAccessToken) }
 });
 
 // window
@@ -31,10 +35,7 @@ window.onload = function() {
     // initListenEvent();
     setupWS();
     let width = window.innerWidth - $("#mySidenav").width();
-    // if (window.innerWidth < 1242) width -= 20;
     let height = window.innerHeight - $(".container-fluid").height();
-    // if (window.innerWidth < 845) height += 52.5;
-    // if (window.innerWidth < 929 && window.innerWidth > 845) height -= 52.5;
 
     let margin_left = $("#mySidenav").width();
     $("#map").css("margin-left", margin_left + "px");
@@ -57,8 +58,6 @@ window.addEventListener("beforeunload", function(e) {
 $(window).resize(function() {
     let width = window.innerWidth - $("#mySidenav").width();
     let height = window.innerHeight - $(".container-fluid").height();
-    // if (window.innerWidth < 845) height += 52.5;
-    // if (window.innerWidth < 929 && window.innerWidth > 845) height -= 52.5;
     let margin_left = $("#mySidenav").width();
     $("#map").css("margin-left", margin_left + "px");
     $("#map").css("width", width + "px");
@@ -70,7 +69,7 @@ $(window).resize(function() {
 var map;
 var marker;
 var newRequest = "free";
-var locator = "ntphi" + new Date().getTime();
+var locator = localStorage.getItem("username");
 var clickOnMap = false;
 var toggle = true; // true: large, false: small
 
@@ -166,15 +165,29 @@ var historyModal = new Vue({
             axiosInstance
                 .get("/request/history/" + locator)
                 .then(function(res) {
-                    if (res.status == 200) {
+                    if (res.status === 200) {
                         self.hisList = [];
                         res.data.forEach((item, index) => {
                             self.hisList.push(item);
                         });
+                        $("#historyModal").modal({
+                            backdrop: "static",
+                            keyboard: false
+                        });
+                    } else if (res.status === 204) {
+                        swal(
+                            "Thông báo!",
+                            "Bạn chưa định vị yêu cầu nào",
+                            "error"
+                        );
                     }
                 })
                 .catch(function(err) {
-                    console.log(err);
+                    if (err.response.data.msg === "INVALID_TOKEN") {
+                        alert(err.response.data.msg);
+                    } else if (err.response.data.msg === "NO_TOKEN") {
+                        alert(err.response.data.msg);
+                    }
                 })
                 .then(function() {});
         },
@@ -284,7 +297,6 @@ $("#locate").click(() => {
 
 $("#history").click(() => {
     historyModal.loadModal();
-    $("#historyModal").modal({ backdrop: "static", keyboard: false });
 });
 
 $("#real-locate").click(() => {
@@ -298,23 +310,27 @@ $("#real-locate").click(() => {
     }
     newRequest = "waiting";
     marker.setMap(null);
-    axiosInstance
-        .get("/map/geocoding?address=" + locateModal.infoCustomer.address)
-        .then(function(res) {
+    let geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ address: locateModal.infoCustomer.address }, function(
+        results,
+        status
+    ) {
+        if (status === "OK") {
             $("#loaderModal").modal("hide");
+            let location = {
+                lat: +results[0].geometry.location.lat(),
+                lng: +results[0].geometry.location.lng()
+            };
             // Lấy trường bên server (sendToLocator) để kiểm tra gửi trực tiếp hay từ db
-            if (res.status == 200) {
-                marker.setMap(null);
-                addMarker(res.data, map, locateModal.infoCustomer, "new");
-                locateModal.infoCustomer.location_x = res.data.lat;
-                locateModal.infoCustomer.location_y = res.data.lng;
-            }
-        })
-        .catch(function(err) {
+            marker.setMap(null);
+            addMarker(location, map, locateModal.infoCustomer, "new");
+            locateModal.infoCustomer.location_x = location.lat;
+            locateModal.infoCustomer.location_y = location.lng;
+        } else {
             $("#loaderModal").modal("hide");
             $("#re-locateModal").modal({ backdrop: "static", keyboard: false });
-        })
-        .then(function() {});
+        }
+    });
 });
 
 $("#re-locate").click(() => {

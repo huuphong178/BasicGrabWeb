@@ -61,7 +61,7 @@ router.put("/", (req, res) => {
             events.publishRequestModified(req.body);
             //test driver
             var json = JSON.stringify(req.body);
-            wsForApp4.sendToDriver(json)
+            wsForApp4.sendToDriver(json);
         })
         .catch(err => {
             console.log(err);
@@ -101,6 +101,7 @@ router.get("/minway/:requestID", (req, res) => {
                 res.json(rows[0]);
             } else {
                 res.statusCode = 204;
+                res.end();
             }
         })
         .catch(err => {
@@ -191,12 +192,15 @@ router.get("/history/:locator", (req, res) => {
     requestRepo
         .getLocateHistory(locator)
         .then(rows => {
+            console.log(rows);
             if (rows.length > 0) {
                 var request = rows;
                 res.statusCode = 200;
                 res.json(request);
             } else {
+                console.log("else");
                 res.statusCode = 204;
+                res.end();
             }
         })
         .catch(err => {
@@ -217,6 +221,7 @@ router.get("/:id", (req, res) => {
                 res.json(request);
             } else {
                 res.statusCode = 204;
+                res.end();
             }
         })
         .catch(err => {
