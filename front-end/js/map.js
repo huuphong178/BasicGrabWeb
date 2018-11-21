@@ -3,11 +3,31 @@ var image = "./image/marker.png";
 var markermain;
 var infowindow;
 //set ID mat dinh
-var id_driver = 1540695005611;
+var id_driver = 1540709441669;
 var checkHaversine = true;
 var map = null;
 var directionsDisplay = null;
+const TIME_REQUEST = 10;
+var second = TIME_REQUEST;
+var timer;
+var fn = function () {
+    time.second.value = second--;
+    if (second == -1) {
+        time.second.value = 0;
+        modalRequest.denyModal();
+        $('#mymodalRequest').modal("hide");
+        clearInterval(timer);
 
+    }
+}
+var start = function () {
+    time.second.value = TIME_REQUEST;
+    second = TIME_REQUEST
+    timer = setInterval(fn, 1000);
+}
+var stop = function () {
+    clearInterval(timer);
+}
 
 function initMap() {
     khtn = {
@@ -17,14 +37,13 @@ function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 16,
         center: khtn,
-        fullscreenControl: false
     });
     markermain = new google.maps.Marker({
-        position: khtn,
-        draggable: true,
-        animation: google.maps.Animation.DROP,
-        map: map,
-        icon: image
+        // position: khtn,
+        // draggable: true,
+        // animation: google.maps.Animation.DROP,
+        // map: map,
+        // icon: image
     });
     infowindow = new google.maps.InfoWindow({
         content: "Bạn đang ở đây !"
@@ -37,20 +56,37 @@ function initMap() {
         }, map);
 
     });
-    // google.maps.event.addListener(markermain, 'dragend', function () {
-    //     // addMarker({
-    //     //     lat: this.getPosition().lat(),
-    //     //     lng: this.getPosition().lng()
-    //     // }, map);
-    //     console.log(this.getPosition());
-    //     alert('dung');
-
-    // });
-
+    getMarkerFirst(map);
     // Add a marker at the center of the map.
-    addMarker(khtn, map);
+   // addMarker(khtn, map);
+   //dragen event of marker
 }
+function getMarkerFirst(map){
+    var axiosInstance = axios.create({
+        baseURL: 'http://localhost:3000/driver',
+        timeout: 15000
+    });
 
+    axiosInstance.get('/' + id_driver)
+        .then((res) => {
+            console.log(res);
+            var currentDriverInfo = res.data;
+            var location = {
+                lat: +currentDriverInfo.location_X,
+                lng: +currentDriverInfo.location_Y
+            };
+            markermain = new google.maps.Marker({
+                position: location,
+                draggable: false,
+                animation: google.maps.Animation.DROP,
+                map: map,
+                icon: image
+            });
+            infowindow.open(map, markermain);
+        }).catch((err) => {
+            console.log(err);
+        })
+}
 // Adds a marker to the map.
 function addMarker(location, map) {
     console.log(location);
@@ -62,7 +98,7 @@ function addMarker(location, map) {
             markermain = new google.maps.Marker({
                 position: location,
                 //label: labels[labelIndex++ % labels.length],
-                draggable: true,
+                draggable: false,
                 animation: google.maps.Animation.DROP,
                 map: map,
                 icon: image
@@ -73,10 +109,7 @@ function addMarker(location, map) {
         }
     })
     markermain.addListener('click', toggleBounce);
-    markermain.addListener('drag', toggleBounce);
-    markermain.addListener('dragend', toggleBounce);
 }
-
 function toggleBounce() {
     infowindow.open(map, markermain);
     if (markermain.getAnimation() !== null) {
@@ -147,7 +180,7 @@ var setupWS = function () {
     ws.onmessage = function (e) {
         console.log(e);
         modalRequest.loadModal(e.data);
-
+        start();
     };
 
     ws.onclose = function (e) {
@@ -165,20 +198,22 @@ var actionTrip = new Vue({
     methods: {
         finishTrip: function () {
             let self = this;
-            var msg = {
-                finishMsg: modalRequest.infoCustomer 
-            }
-            console.log(msg);
-            var message = JSON.stringify(msg);
-            ws.send(message);
             self.visable = false;
- 		self.disabled = false;
- 		directionsDisplay.setMap(null);
+            self.disabled = false;
+            directionsDisplay.setMap(null);
+            //Cap nhat trang thai request da co xe nhan
+            modalRequest.infoCustomer.status = 4;
+            updateStatusRequest(modalRequest.infoCustomer);
+            //Cap nhat trang thai ready
+            updateStatus(id_driver, 1)
 
         },
         startTrip: function () {
             let self = this;
             self.disabled = true;
+            //Cap nhat trang thai request da co xe nhan
+            modalRequest.infoCustomer.status = 3;
+            updateStatusRequest(modalRequest.infoCustomer);
         }
     }
 
@@ -195,89 +230,107 @@ var modalRequest = new Vue({
             $('#mymodalRequest').modal("show");
         },
         denyModal: function () {
+            stop();
             let self = this;
-            var msg = {
-                denyMsg: self.infoCustomer
+            var instanceStatus = axios.create({
+                baseURL: 'http://localhost:3000/driver',
+                timeout: 3000
+            });
+            var blacklistEntity = {
+                id_driver: id_driver,
+                id_request: self.infoCustomer.id
             }
-            console.log(msg);
-            var message = JSON.stringify(msg);
-            ws.send(message);
+            instanceStatus.post('/blacklist', blacklistEntity)
+                .then(function (res) {
+                    if (res.status === 200) {
+                        var msg = {
+                            msgResend: self.infoCustomer
+                        };
+                        ws.send(JSON.stringify(msg));
+                    }
+                })
+                .catch(err => console.log(err))
+           
         },
         accessModal: function () {
+            stop();
             let self = this;
 
             var axiosInstance = axios.create({
-				baseURL: 'http://localhost:3000/driver',
-				timeout: 15000
-			});
-			
-			axiosInstance.get('/' + id_driver)
-				.then((res) => {
-					console.log(res);
-					var currentDriverInfo = res.data;
-                    var A = {lat: +currentDriverInfo.location_X, lng: +currentDriverInfo.location_Y};
-                    var B = {lat: +self.infoCustomer.location_x, lng: +self.infoCustomer.location_y};
-                    
+                baseURL: 'http://localhost:3000/driver',
+                timeout: 15000
+            });
+
+            axiosInstance.get('/' + id_driver)
+                .then((res) => {
+                    console.log(res);
+                    var currentDriverInfo = res.data;
+                    var A = {
+                        lat: +currentDriverInfo.location_X,
+                        lng: +currentDriverInfo.location_Y
+                    };
+                    var B = {
+                        lat: +self.infoCustomer.location_x,
+                        lng: +self.infoCustomer.location_y
+                    };
+
                     self.direction(A, B);
-				}).catch((err) => {
-					console.log(err);
-				}).then(() => {
-
-				});
-
-
-
-            // console.log(msg);
-            // var message=JSON.stringify(msg);
-            // ws.send(message);
-            // $('#mymodalRequest').modal("hide");
-            // actionTrip.visable=true;
+                }).catch((err) => {
+                    console.log(err);
+                }).then(() => {});
+            //Cap nhat status cua request va driver
+            self.infoCustomer.status = 2;
+            updateStatusRequest(self.infoCustomer);
+            updateStatus(id_driver, 3)
         },
-        direction: function(A, B){
+        direction: function (A, B) {
             let self = this;
             //var markerOption = new google.maps.Marker({icon: image});
-			directionsDisplay = new google.maps.DirectionsRenderer({preserveViewport: true});
+            directionsDisplay = new google.maps.DirectionsRenderer({
+                preserveViewport: true
+            });
             var directionsSvc = new google.maps.DirectionsService();
-            var center = {lat: (A.lat + B.lat)/2, lng: (A.lng + B.lng)/2};
+            var center = {
+                lat: (A.lat + B.lat) / 2,
+                lng: (A.lng + B.lng) / 2
+            };
             map.setCenter(center);
             directionsDisplay.setMap(map);
 
             var directionsRequest = {
-				origin: A,
-				destination: B,
-				travelMode: google.maps.DirectionsTravelMode.DRIVING
+                origin: A,
+                destination: B,
+                travelMode: google.maps.DirectionsTravelMode.DRIVING
             };
 
             console.log(directionsRequest);
 
-            directionsSvc.route(directionsRequest, function(result, status){
-				if (status == google.maps.DirectionsStatus.OK){
-					directionsDisplay.setDirections(result);
+            directionsSvc.route(directionsRequest, function (result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(result);
                     map.setZoom(14);
-                    
+
                     google.maps.event.addListener(directionsDisplay, 'click', function (event) {
                         addMarker({
                             lat: event.latLng.lat(),
                             lng: event.latLng.lng()
                         }, directionsDisplay);
-                
+
                     });
 
                     //Show <Bat dau> <Ket thuc>
- var msg={
-
+                    var msg = {
                         accessMsg: self.infoCustomer
                     }
 
                     console.log(msg);
- var message=JSON.stringify(msg);
+                    var message = JSON.stringify(msg);
                     ws.send(message);
                     $('#mymodalRequest').modal("hide");
- actionTrip.visable=true;
-                }
-				else
-					alert(status);
-			});
+                    actionTrip.visable = true;
+                } else
+                    alert(status);
+            });
         }
 
     }
@@ -293,13 +346,17 @@ var switchStatus = function (checkbox) {
         $.notify(
             "Off", "error",
         );
-        directionsDisplay.setMap(null);
+        if (directionsDisplay) {
+            directionsDisplay.setMap(null);
+        }
         updateStatus(id_driver, 2);
         ws.close();
+      //  map.setClickableIcons(false);
+       // map.clickableIcons=false;
     }
 }
 
-//call Api updateStatus
+//call Api updateStatusDriver
 var updateStatus = function (id, status) {
     var data = {
         id: id,
@@ -311,6 +368,19 @@ var updateStatus = function (id, status) {
     });
 
     instance.put('/status', data)
+        .then(function (res) {
+            if (res.status === 200) {}
+        }).catch(function (err) {
+            console.log(err);
+        })
+}
+//call Api updateStatusRequest
+var updateStatusRequest = function (requestEntity) {
+    var instance = axios.create({
+        baseURL: 'http://localhost:3000/request',
+        timeout: 3000
+    });
+    instance.put('/', requestEntity)
         .then(function (res) {
             if (res.status === 200) {}
         }).catch(function (err) {
@@ -336,10 +406,10 @@ var deleteBlackList = function () {
             }
 
         })
-        .catch(err =>
-            reject(err))
+        .catch(err => reject(err))
 
 }
+
 window.addEventListener("beforeunload", function (event) {
     event.returnValue = "Write something clever here..";
 });

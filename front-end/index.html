@@ -31,22 +31,33 @@
                                 <p>{{infoCustomer.name}}</p>
                             </div>
                             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                                    <h3>Số điện thoại</h3>
-                                    <p>{{infoCustomer.phone}}</p>
+                                <h3>Số điện thoại</h3>
+                                <p>{{infoCustomer.phone}}</p>
                             </div>
                             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                                    <h3>Địa chỉ</h3>
-                                    <p>{{infoCustomer.address}}</p>
+                                <h3>Địa chỉ</h3>
+                                <p>{{infoCustomer.address}}</p>
                             </div>
                             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                                    <h3>Ghi chú</h3>
-                                    <p>{{infoCustomer.note}}</p>
+                                <h3>Ghi chú</h3>
+                                <p>{{infoCustomer.note}}</p>
                             </div>
                         </div>
                     </div>
+                    <form name="time">
+                        <div class="time text-center">
+                            <p>THỜI GIAN</p>
+                            <div id="timecount" name="timecount">
+                            </div>
+                            <div>
+                                <input type="text" name="second" id="second" style="width: 80px;" readonly>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button"  v-on:click="denyModal()" class="btn btn-secondary" data-dismiss="modal">Từ chối</button>
+                    <button type="button" v-on:click="denyModal()" class="btn btn-secondary" data-dismiss="modal">Từ
+                        chối</button>
                     <button type="button" v-on:click="accessModal()" class="btn btn-success">Chấp nhận</button>
                 </div>
             </div>
@@ -135,16 +146,18 @@
             <h1>BẮT ĐẦU CHUYẾN ĐI</h1>
         </a>
     </div>
+    
     <label class="switch" id="switchStatus">
         <input type="checkbox" name="checkbox" onclick="switchStatus(this);">
         <span class="slider round"></span>
     </label>
-    <div class="actionTrip" id="actionTrip" >
-        
-        <button type="button" class="btn btn-success" v-if="visable" v-on:click="startTrip();" :disabled="disabled">BẮT ĐẦU</button>
-        
-        <button type="button" class="btn btn-danger" v-if="visable" v-on:click="finishTrip();" >KẾT THÚC</button>
-        
+    <div class="actionTrip" id="actionTrip">
+
+        <button type="button" class="btn btn-success" v-if="visable" v-on:click="startTrip();" :disabled="disabled">BẮT
+            ĐẦU</button>
+
+        <button type="button" class="btn btn-danger" v-if="visable" v-on:click="finishTrip();">KẾT THÚC</button>
+
     </div>
     <div id="map"></div>
     <button onclick="topFunction()" id="myBtnTop" title="Go to top">

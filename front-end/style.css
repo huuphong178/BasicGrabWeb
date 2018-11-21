@@ -207,3 +207,9 @@ input:checked+.slider:before {
     font-size: 20px;
     
 }
+.time {
+	font-weight: bold;
+	font-size: 30px;
+    color: red;
+    text-align: center;
+}

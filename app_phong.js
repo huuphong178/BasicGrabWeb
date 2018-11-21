@@ -6,12 +6,17 @@ var express = require('express'),
 var app = express();
 var requestCtrl=require('./apiControllers/requestController');
 var driverCtrl=require('./apiControllers/driverController');
+var mapCtrl = require("./apiControllers/mapController");
+var events = require("./event/events");
+
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cors());
 
 app.use('/request',requestCtrl);
 app.use('/driver', driverCtrl);
+app.use("/map", mapCtrl);
+app.get("/requestEvent", events.subscribeRequestEvent);
 
 app.get('/', (req, res) => {
     res.json({

@@ -95,6 +95,16 @@ router.get('/', (req, res) => {
 			res.end('View error log on console');
 		})
 })
+router.post('/blacklist', (req, res) => {
+	blacklistRepo.add(req.body).then(value => {
+		console.log('Post blacklist success');
+		res.json(req.body);
+	}).catch(err => {
+		console.log(err);
+			res.statusCode = 500;
+			res.end('View error log on console');
+	})
+})
 router.delete('/blacklist', (req, res) => {
 	blacklistRepo.delete(req.body.id).then(value => {
 		console.log('Delete blacklist success');
