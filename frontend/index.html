@@ -1,125 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        />
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+            crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"
+        />
+        <link rel="stylesheet" type="text/css" href="./app3.css" />
+        <title>REQUEST MANAGEMENT</title>
+        <script src="./js/check_unlogin.js"></script>
+    </head>
 
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-	 crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-	<link rel="stylesheet" type="text/css" href="./app3.css">
-	<title>REQUEST MANAGEMENT</title>
-</head>
-
-<body>
-	<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-	 aria-hidden="true">
-		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="gridSystemModalLabel">
-						Driver: {{value.driver_name}} - Phone: {{value.driver_phone}} - Bike_ID: {{value.driver_bikeid}}
-					</h4>
-				</div>
-				<div class="modal-body">
-					<div class="row">
-						<div id="map"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<nav class="navbar navbar-default" id="nav">
-			<!-- <div class="container-fluid"> -->
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
-					 aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="#">REQUEST MANAGEMENT</a>
-				</div>
-		
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						<li><a href="#"></a></li>
-					</ul>
-					<ul class="nav navbar-nav navbar-right">
-						<li v-show="isLogined == true"><a href="#"><i class="icon far fa-user-circle"></i> Locator's name</a></li>
-						<li v-show="isLogined == true"><a href="#">Đăng xuất</a></li>
-					</ul>
-				</div><!-- /.navbar-collapse -->
-			<!-- </div>/.container-fluid -->
-	</nav>
-
-	<div class="container">
-		<div class="banner">
-			<img src="./images/banner2.jpg" width="100%;">
-			<div class="content-banner">
-				<h1>Chào mừng bạn</h1>
-				<h4>đến với trang quản lý yêu cầu đặt xe của khách hàng</h4>
-			</div>
-		</div>
-		<div class="table-responsive" style="padding-top: 20px;" id="app">
-			<table class="table table-bordered table-hover table-striped">
-				<thead>
-					<tr>
-						<th class="text-align-center" style="width: 10%">#</th>
-						<th class="text-align-center" style="width: 15%">Họ tên</th>
-						<th class="text-align-center" style="width: 10%">Số điện thoại</th>
-						<th class="text-align-center" style="width: 20%">Địa chỉ</th>
-						<th class="text-align-center" style="width: 10%">Trạng thái</th>
-						<th class="text-align-center" style="width: 20%">Ghi chú</th>
-						<th class="text-align-center" style="width: 10%">Tài xế</th>
-						<th class="text-align-center" style="width: 5%">&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(item, index) in sortedArray">
-						<th scope="row">{{item.id}}</th>
-						<td>{{item.name}}</td>
-						<td>{{item.phone}}</td>
-						<td>{{item.address}}</td>
-						<td class="text-align-center">{{item.status}}</td>
-						<td>{{item.note}}</td>
-						<td>{{item.driver}}</td>
-						<td style="text-align: center;">
-							<button type="button" class="btn btn-info" v-on:click="viewDetail(index)" style="width: 100%">
-								<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-							</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-
-	<div>
-        <footer>
-            <div class="footer">
-                <div class="copyright_inf">
-                    <span>BasicGrab© 2018</span> |
-                    <span>Theme by BasicGrab</span> |
+    <body>
+        <div
+            class="modal fade bs-example-modal-lg"
+            id="myModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="myLargeModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="gridSystemModalLabel">
+                            Driver: {{ value.driver_name }} - Phone:
+                            {{ value.driver_phone }} - Bike_ID:
+                            {{ value.driver_bikeid }}
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row"><div id="map"></div></div>
+                    </div>
                 </div>
             </div>
-        </footer>
-    </div>
+        </div>
 
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-	 crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-	 crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-	<script type="text/javascript" src="./app3.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA&callback=initMap" async defer></script>
-</body>
+        <nav class="navbar navbar-default" id="nav">
+            <!-- <div class="container-fluid"> -->
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button
+                    type="button"
+                    class="navbar-toggle collapsed"
+                    data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1"
+                    aria-expanded="false"
+                >
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">REQUEST MANAGEMENT</a>
+            </div>
 
+            <!--
+                Collect the nav links, forms, and other content for toggling
+            -->
+            <div
+                class="collapse navbar-collapse"
+                id="bs-example-navbar-collapse-1"
+            >
+                <ul class="nav navbar-nav">
+                    <li><a href="#"></a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li v-show="isLogined == true">
+                        <a href="#"
+                            ><i class="icon far fa-user-circle"></i> Locator's
+                            name</a
+                        >
+                    </li>
+                    <li v-show="isLogined == true">
+                        <a id="logout">Đăng xuất</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+            <!-- </div>/.container-fluid -->
+        </nav>
+
+        <div class="container">
+            <div class="banner">
+                <img src="./images/banner2.jpg" width="100%;" />
+                <div class="content-banner">
+                    <h1>Chào mừng bạn</h1>
+                    <h4>đến với trang quản lý yêu cầu đặt xe của khách hàng</h4>
+                </div>
+            </div>
+            <div class="table-responsive" style="padding-top: 20px;" id="app">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-align-center" style="width: 10%">
+                                #
+                            </th>
+                            <th class="text-align-center" style="width: 15%">
+                                Họ tên
+                            </th>
+                            <th class="text-align-center" style="width: 10%">
+                                Số điện thoại
+                            </th>
+                            <th class="text-align-center" style="width: 20%">
+                                Địa chỉ
+                            </th>
+                            <th class="text-align-center" style="width: 10%">
+                                Trạng thái
+                            </th>
+                            <th class="text-align-center" style="width: 20%">
+                                Ghi chú
+                            </th>
+                            <th class="text-align-center" style="width: 10%">
+                                Tài xế
+                            </th>
+                            <th class="text-align-center" style="width: 5%">
+                                &nbsp;
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in sortedArray">
+                            <th scope="row">{{ item.id }}</th>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.phone }}</td>
+                            <td>{{ item.address }}</td>
+                            <td class="text-align-center">{{ item.status }}</td>
+                            <td>{{ item.note }}</td>
+                            <td>{{ item.driver }}</td>
+                            <td style="text-align: center;">
+                                <button
+                                    type="button"
+                                    class="btn btn-info"
+                                    v-on:click="viewDetail(index)"
+                                    style="width: 100%"
+                                >
+                                    <span
+                                        class="glyphicon glyphicon-eye-open"
+                                        aria-hidden="true"
+                                    ></span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div>
+            <footer>
+                <div class="footer">
+                    <div class="copyright_inf">
+                        <span>BasicGrab© 2018</span> |
+                        <span>Theme by BasicGrab</span> |
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"
+        ></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script type="text/javascript" src="./app3.js"></script>
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA&callback=initMap"
+            async
+            defer
+        ></script>
+    </body>
 </html>

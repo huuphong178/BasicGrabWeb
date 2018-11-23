@@ -96,13 +96,13 @@ exports.generateRefreshToken = () => {
     return rndToken.generate(SIZE);
 };
 
-exports.updateRefreshToken = (userid, rfToken) => {
+exports.updateRefreshToken = (userid, rfToken, role) => {
     return new Promise((resolve, reject) => {
         var sql = `delete from user_refreshtoken where id=${userid}`;
         db.excute(sql)
             .then(value => {
                 var rdt = moment().format("YYYY-MM-DD HH:mm:ss");
-                sql = `insert into user_refreshtoken(id, rfToken, rdt) values(${userid},'${rfToken}','${rdt}')`;
+                sql = `insert into user_refreshtoken(id, rfToken, rdt, roleid) values(${userid},'${rfToken}','${rdt}', ${role})`;
                 return db.excute(sql);
             })
             .then(value => resolve(value))

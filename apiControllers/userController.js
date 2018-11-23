@@ -1,9 +1,14 @@
 var express = require("express");
 var driverRepo = require("../repos/driverRepo");
 var authRepo = require("../repos/authRepo");
-var locatorRepo = require("../repos/locatorRepo");
+var adminRepo = require("../repos/adminRepo");
 
 var router = express.Router();
+
+var ROLE = {
+    ADMIN: 1,
+    DRIVER: 2
+};
 
 router.post("/driver/register", (req, res) => {
     var driverEntity = {
@@ -47,7 +52,7 @@ router.post("/driver/login", (req, res) => {
                 var acToken = authRepo.generateAccessTokenDriver(loginEntity);
                 var refToken = authRepo.generateRefreshToken();
                 authRepo
-                    .updateRefreshToken(loginEntity.id, refToken)
+                    .updateRefreshToken(loginEntity.id, refToken, ROLE.DRIVER)
                     .then(value => {
                         res.json({
                             auth: true,
@@ -74,7 +79,7 @@ router.post("/driver/login", (req, res) => {
         });
 });
 
-router.post("/locator/register", (req, res) => {
+router.post("/admin/register", (req, res) => {
     var locatorEntity = {
         id: new Date().getTime(),
         name: req.body.name,
@@ -82,7 +87,7 @@ router.post("/locator/register", (req, res) => {
         password: req.body.password
     };
 
-    locatorRepo
+    adminRepo
         .register(locatorEntity)
         .then(rows => {
             res.json(rows);
@@ -94,8 +99,8 @@ router.post("/locator/register", (req, res) => {
         });
 });
 
-router.post("/locator/login", (req, res) => {
-    locatorRepo
+router.post("/admin/login", (req, res) => {
+    adminRepo
         .login(req.body)
         .then(rows => {
             console.log(rows.length);
@@ -104,7 +109,7 @@ router.post("/locator/login", (req, res) => {
                 var acToken = authRepo.generateAccessTokenAdmin(loginEntity);
                 var refToken = authRepo.generateRefreshToken();
                 authRepo
-                    .updateRefreshToken(loginEntity.id, refToken)
+                    .updateRefreshToken(loginEntity.id, refToken, ROLE.ADMIN)
                     .then(value => {
                         res.json({
                             auth: true,

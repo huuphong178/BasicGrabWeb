@@ -7,7 +7,6 @@ var app = express();
 var requestCtrl = require("./apiControllers/requestController");
 var driverCtrl = require("./apiControllers/driverController");
 var mapCtrl = require("./apiControllers/mapController");
-var locatorCtrl = require("./apiControllers/locatorController");
 var userCtrl = require("./apiControllers/userController");
 var middleWare = require("./repos/authRepo");
 var events = require("./event/events");
