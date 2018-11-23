@@ -4,7 +4,10 @@ var authRepo = require("../repos/authRepo");
 var locatorRepo = require("../repos/locatorRepo");
 
 var router = express.Router();
-
+const locationDefault = {
+    X: 10.7624176,
+    Y: 106.68119679999995
+}
 router.post("/driver/register", (req, res) => {
     var driverEntity = {
         id: new Date().getTime(),
@@ -21,7 +24,7 @@ router.post("/driver/register", (req, res) => {
         .register(driverEntity)
         .then(rows => {
             driverRepo
-                .insertCurrDriver(driverEntity.id, 2, { X: null, Y: null })
+                .insertCurrDriver(driverEntity.id, 2, locationDefault)
                 .then(r => {
                     res.json(rows);
                 });

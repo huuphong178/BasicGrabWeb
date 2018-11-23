@@ -15,6 +15,7 @@ var generateAccessTokenDriver = userEntity => {
     var token = jwt.sign(payload, SECRET_DRIVER, {
         expiresIn: AC_LIFETIME
     });
+    console.log('re_CreateAccess');
     return token;
 };
 exports.generateAccessTokenDriver = userEntity => {
@@ -37,7 +38,7 @@ exports.generateAccessTokenAdmin = userEntity => {
 
 exports.verifyAccessToken = (req, res, next) => {
     var token = req.headers["x-access-token"];
-    console.log(token);
+  //  console.log(token);
     if (token) {
         jwt.verify(token, SECRET_ADMIN, (err, payload) => {
             if (err) {
@@ -127,7 +128,7 @@ exports.refreshAccessToken = (user, rfToken) => {
                         return { accToken: generateAccessTokenDriver(user) };
                     }
                 } else {
-                    return {};
+                    return {accToken:false};
                 }
             })
             .then(value => {

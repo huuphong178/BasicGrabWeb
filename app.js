@@ -18,11 +18,11 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cors());
 
-//app.use('/request',verifyAccessTokenAdmin,requestCtrl);
-app.use('/request',requestCtrl);
-//app.use('/driver', verifyAccessToken, driverCtrl);
-app.use('/driver', driverCtrl);
-app.use('/acount', userCtrl);
+app.use('/request',verifyAccessTokenAdmin,requestCtrl);
+//app.use('/request',requestCtrl);
+app.use('/driver', verifyAccessToken, driverCtrl);
+//app.use('/driver', driverCtrl);
+app.use('/account', userCtrl);
 
 app.get("/requestEvent", events.subscribeRequestEvent);
 app.get('/', (req, res) => {
@@ -61,6 +61,6 @@ router.use(function (req, res, next) {
 
 
 var port = process.env.PORT || 3000;
-app.listen(port, () => {
+app.listen(port,() => {
     console.log(`Grab API is running on port ${port}`);
 })

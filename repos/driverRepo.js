@@ -81,7 +81,7 @@ exports.register = (driverEntity) => {
                         '${driverEntity.username}', '${md5_pwd}')`;
                     return db.excute(sql);
                 } else {
-                    return db.excute("select 0");
+                    return { duplicate: true};
                 }
             })
             .then(value => resolve(value))

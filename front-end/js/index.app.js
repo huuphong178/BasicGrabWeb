@@ -1,3 +1,5 @@
+//Set id_driver mac dinh
+var id_driver = 1540709441669;
 $(document).on('click', 'a[href^="#map"]', function (event) {
     event.preventDefault();
 
@@ -26,3 +28,13 @@ function topFunction() {
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
+$(document).ready(function() {
+    var user= JSON.parse(localStorage.getItem("user"));
+    //id_driver=user.id;
+    $('#nameuser').text('Name: '+user.name);
+});
+$("#logout").click(() => {
+    localStorage.clear();
+    window.location.href = window.location.origin + "/login";
+    
+});
