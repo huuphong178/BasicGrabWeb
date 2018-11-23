@@ -50,7 +50,7 @@ exports.updateLocation = (id, location) => {
 }
 
 exports.insertCurrDriver = (id, status, location) => {
-    var sql = `INSERT INTO currentdriver values(${id}, ${status}, ${location.X}, ${location.X})`;
+    var sql = `INSERT INTO currentdriver values(${id}, ${status}, ${location.X}, ${location.Y})`;
     return db.excute(sql);
 }
 

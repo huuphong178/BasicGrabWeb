@@ -5,7 +5,7 @@ var moment = require("moment");
 
 const SECRET_ADMIN = "adminbasicgrab"; //khoa bi mat
 const SECRET_DRIVER = "driverbasicgrab"; //khoa bi mat
-const AC_LIFETIME = 20; // seconds
+const AC_LIFETIME = 60; // seconds
 
 var generateAccessTokenDriver = userEntity => {
     var payload = {

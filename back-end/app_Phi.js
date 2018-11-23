@@ -19,7 +19,6 @@ app.use("/account", userCtrl);
 app.use("/request", middleWare.verifyAccessTokenAdmin, requestCtrl);
 app.use(
     "/driver",
-    middleWare.verifyAccessTokenAdmin,
     middleWare.verifyAccessToken,
     driverCtrl
 );

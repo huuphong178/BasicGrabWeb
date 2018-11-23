@@ -61,7 +61,12 @@ $("#register").click(function() {
                         "Thành công!",
                         `${formdata.username} đã trở thành quản trị viên.`,
                         "success"
-                    );
+                    )
+                    .then((value) => {
+                        if(value){
+                             window.location.href = window.location.origin + "/login";
+                        }
+                    });
                 }
             })
             .fail(function(err) {
