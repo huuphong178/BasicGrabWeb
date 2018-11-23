@@ -22,7 +22,7 @@ $("#login").click(function() {
             localStorage.setItem(keyAccessToken, data.access_token);
             localStorage.setItem(keyRefreshToken, data.refresh_token);
             localStorage.setItem("user", JSON.stringify(data.user));
-            window.location.href = window.location.origin;
+            window.location.href = window.location.origin + "/request";
         } else {
             swal("Thất bại!", "Sai tài khoản hoặc mật khẩu", "error");
         }

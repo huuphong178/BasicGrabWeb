@@ -23,16 +23,17 @@ const INVALID_ADDRESS_BY_USER = "Địa chỉ không hợp lệ - Nhân viên h�
 
 var keyAccessToken = "accessToken";
 var keyRefreshToken = "refreshToken";
-
+var newRequest = "free";
+var user = JSON.parse(localStorage.getItem("user"));
+var clickOnMap = false;
+var toggle = true; // true: large, false: small
 var axiosInstance = axios.create({
     baseURL: "http://localhost:3000",
-    timeout: 10000,
-    headers: { "x-access-token": localStorage.getItem(keyAccessToken) }
+    timeout: 10000
 });
 
 // window
 window.onload = function() {
-    // initListenEvent();
     setupWS();
     let width = window.innerWidth - $("#mySidenav").width();
     let height = window.innerHeight - $(".container-fluid").height();
@@ -43,6 +44,7 @@ window.onload = function() {
     $("#map").css("transition", "0.5s");
     $("#map").css("width", width + "px");
     $("#map").css("height", height + "px");
+    $("#username").text(user.name);
 };
 
 window.addEventListener("beforeunload", function(e) {
@@ -68,11 +70,6 @@ $(window).resize(function() {
 // map
 var map;
 var marker;
-var newRequest = "free";
-var locator = localStorage.getItem("username");
-var clickOnMap = false;
-var toggle = true; // true: large, false: small
-
 var infowindow;
 
 function initMap() {
@@ -162,8 +159,13 @@ var historyModal = new Vue({
     methods: {
         loadModal: function() {
             let self = this;
+
             axiosInstance
-                .get("/request/history/" + locator)
+                .get("/request/history/" + user.username, {
+                    headers: {
+                        "x-access-token": localStorage.getItem(keyAccessToken)
+                    }
+                })
                 .then(function(res) {
                     if (res.status === 200) {
                         self.hisList = [];
@@ -183,11 +185,7 @@ var historyModal = new Vue({
                     }
                 })
                 .catch(function(err) {
-                    if (err.response.data.msg === "INVALID_TOKEN") {
-                        alert(err.response.data.msg);
-                    } else if (err.response.data.msg === "NO_TOKEN") {
-                        alert(err.response.data.msg);
-                    }
+                    refreshToken(err, historyModal.loadModal);
                 })
                 .then(function() {});
         },
@@ -221,7 +219,7 @@ var setupWS = function() {
         console.log("connected");
         var msg = {
             init: {
-                id: locator,
+                id: user.username,
                 status: LocatorStatus.RANH
             }
         };
@@ -347,6 +345,11 @@ $("#re-locate").click(() => {
 $("#destroy-request").click(() => {
     destroyRequest("system");
 });
+
+$("#logout").click(() => {
+    localStorage.clear();
+    window.location.href = window.location.origin + "/login";
+});
 // Done button click
 
 // function
@@ -354,7 +357,7 @@ function doneProcess() {
     // update request location
     let request = locateModal.infoCustomer;
     request.status = RequestStatus.DA_DINH_VI;
-    request.locator = locator;
+    request.locator = user.username;
     doneProcess_SendToServer(request);
 }
 
@@ -362,7 +365,11 @@ function doneProcess_SendToServer(request) {
     clickOnMap = false;
     var dbRequest = request.db ? { id: request.id, check: true } : {};
     axiosInstance
-        .put("/request", request)
+        .put("/request", request, {
+            headers: {
+                "x-access-token": localStorage.getItem(keyAccessToken)
+            }
+        })
         .then(function(res) {
             marker.setDraggable(false);
             $("#doneProcess").css("display", "none");
@@ -377,7 +384,7 @@ function doneProcess_SendToServer(request) {
             locateModal.infoCustomer = {};
             var msg = {
                 doneProcess: {
-                    id: locator,
+                    id: user.username,
                     status: LocatorStatus.RANH,
                     // Nếu gửi trực tiếp thì thêm 1 trường qua server kiển tra coi xóa hay không xóa DB
                     db: dbRequest,
@@ -388,18 +395,39 @@ function doneProcess_SendToServer(request) {
             ws.send(mess);
         })
         .catch(function(err) {
-            console.log(err);
+            refreshToken(err, doneProcess_SendToServer, request);
         });
 }
 
 function destroyRequest(type) {
     let request = locateModal.infoCustomer;
     request.status = RequestStatus.KHONG_THE_DINH_VI;
-    request.locator = locator;
+    request.locator = user.username;
     request.location_x = null;
     request.location_y = null;
     request.note =
         type === "system" ? INVALID_ADDRESS_BY_SYSTEM : INVALID_ADDRESS_BY_USER;
     doneProcess_SendToServer(request);
+}
+
+function refreshToken(err, callback, request) {
+    if (err.response.data.msg === "INVALID_TOKEN") {
+        let user = JSON.parse(localStorage.getItem("user"));
+        let rfTokenData = {
+            user: user,
+            rfToken: localStorage.getItem(keyRefreshToken)
+        };
+        axiosInstance
+            .post("/account/token/refresh", rfTokenData)
+            .then(function(res) {
+                localStorage.setItem(keyAccessToken, res.data.accToken);
+                return callback(request);
+            })
+            .catch(function(err) {
+                //  console.log(err);
+            });
+    } else if (err.response.data.msg === "NO_TOKEN") {
+        alert(err.response.data.msg);
+    }
 }
 // Done function

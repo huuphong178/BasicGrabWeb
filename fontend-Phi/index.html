@@ -18,6 +18,7 @@
             crossorigin="anonymous"
         />
         <link rel="stylesheet" href="./phi_style.css" />
+        <script src="./js/check_unlogin.js"></script>
     </head>
 
     <body>
@@ -49,13 +50,13 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li>
                             <a href="#"
-                                ><i class="icon fas fa-user-injured"></i> Ngô
-                                Thanh Phi</a
-                            >
+                                ><i class="icon fas fa-user-injured"></i>
+                                <span id="username"></span
+                            ></a>
                         </li>
 
                         <li>
-                            <a href="/login"
+                            <a id="logout"
                                 ><i class="icon fas fa-sign-out-alt"></i> Đăng
                                 xuất</a
                             >
