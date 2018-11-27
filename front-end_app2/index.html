@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Định Vị</title>
+        <title>LOCATE REQUEST</title>
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
         <meta charset="utf-8" />
 
@@ -16,6 +16,10 @@
             href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
             integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
             crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"
         />
         <link rel="stylesheet" href="./css/style.css" />
         <script src="./js/check_unlogin.js"></script>
@@ -56,7 +60,7 @@
                         </li>
 
                         <li>
-                            <a id="logout"
+                            <a href="/login" id="logout"
                                 ><i class="icon fas fa-sign-out-alt"></i> Đăng
                                 xuất</a
                             >
@@ -227,12 +231,14 @@
                                     <th style="width: 20%;">Hành động</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="tbody">
                                 <tr v-for="(item, index) in hisList">
-                                    <td>{{ index + 1 }}</td>
-                                    <td>{{ item.name }}</td>
-                                    <td>{{ item.address }}</td>
-                                    <td>
+                                    <td style="width: 7%;">{{ index + 1 }}</td>
+                                    <td style="width: 23%;">{{ item.name }}</td>
+                                    <td style="width: 50%;">
+                                        {{ item.address }}
+                                    </td>
+                                    <td style="width: 20%;">
                                         <button
                                             class="btn btn-info"
                                             v-on:click="viewDetail(index)"

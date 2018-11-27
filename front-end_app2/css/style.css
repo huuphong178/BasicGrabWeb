@@ -43,7 +43,7 @@ body {
     border: none;
     z-index: 2;
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-        url("./image/bg-4.jpg");
+        url("./../image/bg-4.jpg");
 }
 
 /* @media (min-width: 768px) {
@@ -80,7 +80,7 @@ li a:hover {
     top: 0;
     left: 0;
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-        url("./image/bg-4.jpg");
+        url("./../image/bg-4.jpg");
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -227,4 +227,23 @@ li a:hover {
     background-color: rgba(0, 0, 0, 0.0001) !important;
     box-shadow: none;
     border: none;
+}
+
+/* table */
+tbody {
+    display: block;
+    height: 280px;
+    overflow: auto;
+}
+thead,
+tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: auto;
+}
+thead {
+    width: 98%;
+}
+table {
+    width: 400px;
 }
