@@ -57,7 +57,7 @@ router.put("/", (req, res) => {
         .then(value => {
             res.statusCode = 200;
             res.json(req.body);
- events.publishRequestModified(req.body);
+            events.publishRequestModified(req.body);
 
         })
         .catch(err => {
@@ -86,12 +86,9 @@ router.delete("/", (req, res) => {
 
 //NL
 router.get("/minway/:requestID", (req, res) => {
-    console.log("ok");
     var requestID = req.params.requestID;
-    var status = 2; //đã có xe nhận
-
     requestRepo
-        .loadInfo(requestID, status)
+        .loadInfo(requestID)
         .then(rows => {
             if (rows.length > 0) {
                 res.statusCode = 200;
@@ -148,54 +145,16 @@ router.get("/getRequestRealtime", (req, res) => {
 });
 
 // Phi
-router.get("/geocoding", (req, res) => {
-    var address = req.query.address;
-    console.log(address);
-
-    googleMapsClient
-        .geocode({
-            address: address
-        })
-        .asPromise()
-        .then(response => {
-            console.log(response.json.results[0].geometry.location);
-            res.json(response.json.results[0].geometry.location);
-        })
-        .catch(err => {
-            console.log(err);
-        });
-});
-
-router.get("/reverse-geocoding", (req, res) => {
-    var latlng = `${req.query.lat}, ${req.query.lng}`;
-    console.log(latlng);
-
-    googleMapsClient
-        .reverseGeocode({
-            latlng: latlng
-        })
-        .asPromise()
-        .then(response => {
-            console.log(response.json.results[0].formatted_address);
-            res.json(response.json.results[0].formatted_address);
-        })
-        .catch(err => {
-            console.log(err);
-        });
-});
-
 router.get("/history/:locator", (req, res) => {
     var locator = req.params.locator;
     requestRepo
         .getLocateHistory(locator)
         .then(rows => {
-            console.log(rows);
             if (rows.length > 0) {
                 var request = rows;
                 res.statusCode = 200;
                 res.json(request);
             } else {
-                console.log("else");
                 res.statusCode = 204;
                 res.end();
             }

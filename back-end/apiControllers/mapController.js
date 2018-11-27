@@ -59,7 +59,7 @@ router.get("/directions/:id", (req, res) => {
     var requestId = req.params.id;
 
     requestRepo
-        .loadInfo(requestId, 2)
+        .loadInfo(requestId)
         .then(rows => {
             if (rows.length > 0) {
                 var origin = `${rows[0].request_loX}, ${rows[0].request_loY}`;

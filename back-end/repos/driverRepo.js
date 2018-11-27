@@ -2,6 +2,9 @@ var db = require('../fn/mysql-db');
 
 var md5 = require('crypto-js/md5');
 var haversine = require('haversine');
+var requestRepo = require('./requestRepo');
+var events = require("../event/events");
+
 //sO LAn tim kiem driver
 var LOOP_FIND = 2;
 //Ban kinh tim driver
@@ -81,7 +84,9 @@ exports.register = (driverEntity) => {
                         '${driverEntity.username}', '${md5_pwd}')`;
                     return db.excute(sql);
                 } else {
-                    return { duplicate: true};
+                    return {
+                        duplicate: true
+                    };
                 }
             })
             .then(value => resolve(value))
@@ -175,17 +180,23 @@ exports.getDriverBest = async function (locationRequest, requestID) {
     for (let i = 0; i < 5000; i++) {
         if (!check) {
             await findDriverBest(locationRequest, requestID).then(value => {
-                console.log(`id_driver: ${value} được chọn để gửi` )
+                console.log(`id_driver: ${value} được chọn để gửi`)
                 if (value != -1) {
-                    console.log('abcd');
                     check = true;
                     result = value;
 
                 }
             });
-        } else { return result; }
-
+        } else {
+            return result;
+        }
+        //Cap nhat trang thai request khong co xe nhan
+        if (i === 4999) requestRepo.updateStatusRe(requestID, 6).then(value => {
+            requestRepo.getRequest(requestID).then(data => {
+                events.publishRequestModified(data[0]);
+            })
+        })
         console.log(i);
     }
-	return result;
+    return result;
 }

@@ -1,10 +1,15 @@
 var keyAccessToken = "accessToken";
 var keyRefreshToken = "refreshToken";
-
-$("#login").click(function() {
+$(document).ready(function(){
+    $('input').keypress(function(e){
+      if(e.keyCode==13)
+      $('#login').click();
+    });
+});
+$("#login").click(function () {
     var formdata = {
         username: $("#username").val(),
-        password:  md5($("#password").val())
+        password: md5($("#password").val())
     };
 
     $.ajax({
@@ -14,10 +19,10 @@ $("#login").click(function() {
         dataType: "json",
         data: JSON.stringify(formdata),
         timeout: 10000,
-        error: function(xhr, desc, err) {
+        error: function (xhr, desc, err) {
             alert("Có lỗi xảy");
         }
-    }).done(function(data) {
+    }).done(function (data) {
         if (data.auth) {
             localStorage.setItem(keyAccessToken, data.access_token);
             localStorage.setItem(keyRefreshToken, data.refresh_token);
@@ -29,7 +34,7 @@ $("#login").click(function() {
     });
 });
 
-$("#register").click(function() {
+$("#register").click(function () {
     if ($("#password").val() === $("#re_password").val()) {
         var formdata = {
             username: $("#username").val(),
@@ -41,17 +46,17 @@ $("#register").click(function() {
             password: md5($("#password").val())
         };
         $.ajax({
-            contentType: "application/json",
-            url: "http://localhost:3000/account/driver/register",
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify(formdata),
-            timeout: 10000,
-            error: function(xhr, desc, err) {
-                console.log(err);
-            }
-        })
-            .done(function(data) {
+                contentType: "application/json",
+                url: "http://localhost:3000/account/driver/register",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(formdata),
+                timeout: 10000,
+                error: function (xhr, desc, err) {
+                    console.log(err);
+                }
+            })
+            .done(function (data) {
                 if (data.duplicate) {
                     swal(
                         "Cảnh báo!",
@@ -64,13 +69,20 @@ $("#register").click(function() {
                         "Thành công!",
                         `${formdata.username} đã trở thành tài xế.`,
                         "success"
-                    );
+                    ).then((value) => {
+                        if (value) {
+                            window.location.href = window.location.origin + "/login";
+                        }
+                    });
                 }
             })
-            .fail(function(err) {
+            .fail(function (err) {
                 alert("Something wrong");
             });
     } else {
         alert("Mật khẩu không khớp");
     }
+});
+$("#btnregister").click(function () {
+    window.location.href = window.location.origin + "/register";
 });

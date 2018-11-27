@@ -54,7 +54,11 @@ $("#register").click(function() {
                         "Cảnh báo!",
                         `${formdata.username} đã tồn tại.`,
                         "error"
-                    );
+                    )   .then((value) => {
+                        if(value){
+                             window.location.href = window.location.origin + "/login";
+                        }
+                    });
                 } else {
                     // window.location.href = window.location.origin + "/login";
                     swal(
