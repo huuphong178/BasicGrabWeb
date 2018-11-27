@@ -8,6 +8,12 @@
         />
         <link
             rel="stylesheet"
+            href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+            integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+            crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
             href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
             integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
             crossorigin="anonymous"
@@ -16,6 +22,7 @@
             rel="stylesheet"
             href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"
         />
+
         <link rel="stylesheet" type="text/css" href="./css/app3.css" />
         <title>REQUEST MANAGEMENT</title>
         <script src="./js/check_unlogin.js"></script>
@@ -84,14 +91,18 @@
                     <li><a href="#"></a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li v-show="isLogined == true">
+                    <li>
                         <a href="#"
-                            ><i class="icon far fa-user-circle"></i> Locator's
-                            name</a
-                        >
+                            ><i class="icon fas fa-user-injured"></i>
+                            <span id="username"></span
+                        ></a>
                     </li>
-                    <li v-show="isLogined == true">
-                        <a id="logout">Đăng xuất</a>
+
+                    <li>
+                        <a href="/login" id="logout"
+                            ><i class="icon fas fa-sign-out-alt"></i> Đăng
+                            xuất</a
+                        >
                     </li>
                 </ul>
             </div>
@@ -169,8 +180,7 @@
             <footer>
                 <div class="footer">
                     <div class="copyright_inf">
-                        <span>BasicGrab© 2018</span> |
-                        <span>Theme by BasicGrab</span> |
+                        BasicGrab© 2018 | Theme by BasicGrab |
                     </div>
                 </div>
             </footer>
@@ -191,7 +201,7 @@
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <script type="text/javascript" src="./js/app3.js"></script>
         <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzA&callback=initMap"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjXOTwJfibm1_5WlpRkSaZgy2hdGjdwzAv&callback=initMap"
             async
             defer
         ></script>

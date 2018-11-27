@@ -1,3 +1,4 @@
+$("#username").text(JSON.parse(localStorage.getItem("user")).name);
 window.onload = function() {
     console.log("NL");
     app.setupSSE();

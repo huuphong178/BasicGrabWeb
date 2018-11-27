@@ -7,7 +7,8 @@ var socketServer;
 
 if (!socketServer) {
     socketServer = new WebSocket.Server({
-        port: SOCKET_PORT
+        port: SOCKET_PORT,
+        origin:'0.0.0.0'
     });
 
     socketServer.on("connection", ws => {

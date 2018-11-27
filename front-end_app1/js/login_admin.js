@@ -22,7 +22,7 @@ $("#login").click(function() {
             localStorage.setItem(keyAccessToken, data.access_token);
             localStorage.setItem(keyRefreshToken, data.refresh_token);
             localStorage.setItem("user", JSON.stringify(data.user));
-            window.location.href = window.location.origin + "/request";
+            window.location.href = window.location.origin;
         } else {
             swal("Thất bại!", "Sai tài khoản hoặc mật khẩu", "error");
         }
@@ -43,10 +43,7 @@ $("#register").click(function() {
             type: "POST",
             dataType: "json",
             data: JSON.stringify(formdata),
-            timeout: 10000,
-            error: function(xhr, desc, err) {
-                console.log(err);
-            }
+            timeout: 10000
         })
             .done(function(data) {
                 if (data.duplicate) {
@@ -56,17 +53,11 @@ $("#register").click(function() {
                         "error"
                     );
                 } else {
-                    // window.location.href = window.location.origin + "/login";
                     swal(
                         "Thành công!",
                         `${formdata.username} đã trở thành quản trị viên.`,
                         "success"
-                    )
-                    .then((value) => {
-                        if(value){
-                             window.location.href = window.location.origin + "/login";
-                        }
-                    });
+                    );
                 }
             })
             .fail(function(err) {

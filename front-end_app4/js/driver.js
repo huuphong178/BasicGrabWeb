@@ -185,7 +185,7 @@ var setupWS = function () {
         ws.send(JSON.stringify(msg));
     };
     ws.onmessage = function (e) {
-        console.log(e);
+        console.log('startmodal');
         modalRequest.loadModal(e.data);
         start();
     };
@@ -257,14 +257,14 @@ var modalRequest = new Vue({
                 })
                 .catch(err =>{
                     console.log('het han');
-            refreshToken(err,true,true,denyModal);
+                    refreshToken(err,true,true,self.denyModal);
                 })
 
         },
-        accessModal: function () {
+        accessModal: function (arg1,arg2) {
             stop();
             let self = this;
-            axiosInstance.get('/driver' + id_driver, {
+            axiosInstance.get('/driver/' + id_driver, {
                     headers: {
                         "x-access-token": localStorage.getItem(keyAccessToken)
                     }
@@ -282,14 +282,16 @@ var modalRequest = new Vue({
                     };
 
                     self.direction(A, B);
+                     //Cap nhat status cua request va driver
+                    self.infoCustomer.status = 2;
+                    let id_d=id_driver;
+                    self.infoCustomer.driver_id = id_d;  
+                    updateStatusRequest(self.infoCustomer,true);
+                    updateStatus(id_driver, 3)
                 }).catch((err) => {
                     console.log('het han');
-            refreshToken(err,true,true,accessModal);
-                }).then(() => {});
-            //Cap nhat status cua request va driver
-            self.infoCustomer.status = 2;
-            updateStatusRequest(self.infoCustomer,true);
-            updateStatus(id_driver, 3)
+                    refreshToken(err,arg1,arg2,self.accessModal);
+                })
         },
         direction: function (A, B) {
             let self = this;
@@ -381,13 +383,13 @@ var updateStatus = function (id, status) {
         })
 }
 //call Api updateStatusRequest
-var updateStatusRequest = function (requestEntity,requestEntity) {
+var updateStatusRequest = function (requestEntity,requestEntity2) {
     axiosInstance.put('/request', requestEntity)
         .then(function (res) {
             if (res.status === 200) {}
         }).catch(function (err) {
             console.log('het han');
-            refreshToken(err,requestEntity,requestEntity,updateStatusRequest);
+            refreshToken(err,requestEntity,requestEntity2,updateStatusRequest);
         })
 }
 var deleteBlackList = function () {
