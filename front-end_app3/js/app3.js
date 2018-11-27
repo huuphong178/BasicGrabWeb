@@ -17,6 +17,9 @@ var axiosInstance = axios.create({
     timeout: 15000
 });
 
+var arrStatus = ["Chưa định vị", "Đã định vị", "Có xe nhận", "Đang di chuyển",
+                 "Đã hoàn thành", "Không định vị", "Không có xe nhận"];
+
 var app = new Vue({
     el: "#app",
     data: {
@@ -42,7 +45,7 @@ var app = new Vue({
                 " - " +
                 item.driver;
             // alert(str);
-            if (item.status != 2) {
+            if (item.status === 0 || item.status === 1 || item.status === 5 || item.status === 6) {
                 swal("Cảnh báo!", "Yêu cầu chưa được xác nhận", "error");
             } else {
                 $("#myModal").modal("show");
@@ -71,7 +74,8 @@ var app = new Vue({
                                 address: item.address,
                                 status: item.status,
                                 note: item.note,
-                                driver: item.driver_id
+                                driver_id: item.driver_id,
+                                status_display: arrStatus[item.status]
                             };
                             self.list.push(tempt);
                         });
@@ -102,6 +106,7 @@ var app = new Vue({
                 "REQUEST_ADDED",
                 e => {
                     var data = JSON.parse(e.data);
+                    data.status_display = arrStatus[data.status];
                     self.list.push(data);
                 },
                 false
@@ -111,6 +116,7 @@ var app = new Vue({
                 "REQUEST_MODIFIED",
                 e => {
                     var data = JSON.parse(e.data);
+                    data.status_display = arrStatus[data.status];
                     var id = data.id;
                     self.list.forEach((c, i) => {
                         if (c.id == id) {
