@@ -10,6 +10,9 @@ $(document).ready(function() {
     });
 });
 
+var user = JSON.parse(localStorage.getItem("user"));
+$("#username").text(user.name);
+
 var axiosInstance = axios.create({
     baseURL: "http://localhost:3000",
     timeout: 10000
@@ -64,3 +67,8 @@ function refreshToken(err, callback) {
         alert(err.response.data.msg);
     }
 }
+
+$("#logout").click(() => {
+    localStorage.clear();
+    window.location.href = window.location.origin + "/login";
+});

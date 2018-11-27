@@ -32,19 +32,19 @@ var axiosInstance = axios.create({
     timeout: 10000
 });
 
+$("#username").text(user.name);
+
 // window
 window.onload = function() {
     setupWS();
     let width = window.innerWidth - $("#mySidenav").width();
     let height = window.innerHeight - $(".container-fluid").height();
-
     let margin_left = $("#mySidenav").width();
     $("#map").css("margin-left", margin_left + "px");
     $("#map").css("margin-top", "-20px");
     $("#map").css("transition", "0.5s");
     $("#map").css("width", width + "px");
     $("#map").css("height", height + "px");
-    $("#username").text(user.name);
 };
 
 window.addEventListener("beforeunload", function(e) {

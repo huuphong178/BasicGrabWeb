@@ -29,7 +29,7 @@ $("#login").click(function () {
             localStorage.setItem("user", JSON.stringify(data.user));
             window.location.href = window.location.origin;
         } else {
-            alert("Sai tai khoan hoac mat khau");
+            swal("Cảnh báo!", `Sai tài khoản hoặc mật khẩu.`, "error");
         }
     });
 });
@@ -40,9 +40,9 @@ $("#register").click(function () {
             username: $("#username").val(),
             name: $("#name").val(),
             phone: $("#phone").val(),
-            address: $('#address').val(),
-            bike_id: $('#bike_id').val(),
-            bike_type: $('#bike_type').val(),
+            address: $("#address").val(),
+            bike_id: $("#bike_id").val(),
+            bike_type: $("#bike_type").val(),
             password: md5($("#password").val())
         };
         $.ajax({
@@ -51,10 +51,8 @@ $("#register").click(function () {
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify(formdata),
-                timeout: 10000,
-                error: function (xhr, desc, err) {
-                    console.log(err);
-                }
+ timeout: 10000
+
             })
             .done(function (data) {
                 if (data.duplicate) {
@@ -64,7 +62,6 @@ $("#register").click(function () {
                         "error"
                     );
                 } else {
-                    // window.location.href = window.location.origin + "/login";
                     swal(
                         "Thành công!",
                         `${formdata.username} đã trở thành tài xế.`,

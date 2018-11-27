@@ -43,10 +43,7 @@ $("#register").click(function() {
             type: "POST",
             dataType: "json",
             data: JSON.stringify(formdata),
-            timeout: 10000,
-            error: function(xhr, desc, err) {
-                console.log(err);
-            }
+            timeout: 10000
         })
             .done(function(data) {
                 if (data.duplicate) {
@@ -60,7 +57,6 @@ $("#register").click(function() {
                         }
                     });
                 } else {
-                    // window.location.href = window.location.origin + "/login";
                     swal(
                         "Thành công!",
                         `${formdata.username} đã trở thành quản trị viên.`,
