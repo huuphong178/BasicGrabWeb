@@ -5,6 +5,13 @@ var haversine = require('haversine');
 var router = express.Router();
 var blacklistRepo = require("../repos/blacklistRepo");
 
+var DISTANCE_MOVE=100 //meters
+router.put('/distance_move', (req, res) => {
+	if(req.body.distance>0){
+		DISTANCE_MOVE = req.body.distance;
+		res.json(DISTANCE_MOVE);
+	}
+})
 router.put('/', (req, res) => {
 	var id = req.body.id;
 	var status = req.body.status;
@@ -48,7 +55,7 @@ var checkHarversine = (id_driver, locationend) => {
 						unit: 'meter'
 					});
 					console.log(Distance);
-					if (Distance <= 100) return true;
+					if (Distance <= DISTANCE_MOVE) return true;
 					return false;
 				}
 			}).then(value => resolve(value))

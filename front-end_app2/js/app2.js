@@ -294,6 +294,11 @@ $("#locate").click(() => {
 });
 
 $("#history").click(() => {
+    if (historyModal.hisList.length > 5) {
+        $("#thead").css("width", "98.3%");
+    } else {
+        $("#thead").css("width", "100%");
+    }
     historyModal.loadModal();
 });
 

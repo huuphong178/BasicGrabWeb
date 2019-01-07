@@ -220,6 +220,27 @@ $("#logout").click(() => {
     window.location.href = window.location.origin + "/login";
 });
 
+var changeDistance=(ac)=>{
+    let data = {
+        distance: $("#meters").val()
+    };
+    axiosInstance
+    .put("/driver/distance_move", data,{
+        headers: {
+            "x-access-token": localStorage.getItem(keyAccessToken)
+        }
+    })
+    .then(function(res) {
+        swal("Thông báo", "Thay đổi tốc độ tối đa thành công");
+    })
+    .catch(function(err) {
+        refreshToken(err,changeDistance,ac);
+    });
+}
+
+$("#changeDistance").click(() => {
+    changeDistance(true);
+});
 function refreshToken(err, callback, arg1) {
     if (err.response.data.msg === "INVALID_TOKEN") {
         let user = JSON.parse(localStorage.getItem("user"));

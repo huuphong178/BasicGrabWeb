@@ -61,13 +61,13 @@ function initMap() {
         }, map);
 
     });
-    getMarkerFirst(map,map);
+    getMarkerFirst(map, map);
     // Add a marker at the center of the map.
     // addMarker(khtn, map);
     //dragen event of marker
 }
 
-let getMarkerFirst=function(arg1,arg2){
+let getMarkerFirst = function (arg1, arg2) {
     axiosInstance.get('/driver/' + id_driver, {
             headers: {
                 "x-access-token": localStorage.getItem(keyAccessToken)
@@ -91,7 +91,7 @@ let getMarkerFirst=function(arg1,arg2){
         }).catch((err) => {
             //console.log(err.response);
             console.log('het han');
-            refreshToken(err,arg1,arg2,getMarkerFirst);
+            refreshToken(err, arg1, arg2, getMarkerFirst);
         })
 }
 // Adds a marker to the map.
@@ -160,7 +160,7 @@ let updateLocation = function (id, location) {
             .then(value => resolve(value))
             .catch(err => {
                 console.log('het han');
-                refreshToken(err,id, location, updateLocation);
+                refreshToken(err, id, location, updateLocation);
             })
     })
 }
@@ -209,7 +209,7 @@ var actionTrip = new Vue({
             directionsDisplay.setMap(null);
             //Cap nhat trang thai request da co xe nhan
             modalRequest.infoCustomer.status = 4;
-            updateStatusRequest(modalRequest.infoCustomer,true);
+            updateStatusRequest(modalRequest.infoCustomer, true);
             //Cap nhat trang thai ready
             updateStatus(id_driver, 1)
 
@@ -219,7 +219,7 @@ var actionTrip = new Vue({
             self.disabled = true;
             //Cap nhat trang thai request da co xe nhan
             modalRequest.infoCustomer.status = 3;
-            updateStatusRequest(modalRequest.infoCustomer,true);
+            updateStatusRequest(modalRequest.infoCustomer, true);
         }
     }
 
@@ -242,6 +242,7 @@ var modalRequest = new Vue({
                 id_driver: id_driver,
                 id_request: self.infoCustomer.id
             }
+            updateStatus(id_driver, 1);
             axiosInstance.post('/driver/blacklist', blacklistEntity, {
                     headers: {
                         "x-access-token": localStorage.getItem(keyAccessToken)
@@ -255,13 +256,13 @@ var modalRequest = new Vue({
                         ws.send(JSON.stringify(msg));
                     }
                 })
-                .catch(err =>{
+                .catch(err => {
                     console.log('het han');
-                    refreshToken(err,true,true,self.denyModal);
+                    refreshToken(err, true, true, self.denyModal);
                 })
 
         },
-        accessModal: function (arg1,arg2) {
+        accessModal: function (arg1, arg2) {
             stop();
             let self = this;
             axiosInstance.get('/driver/' + id_driver, {
@@ -282,15 +283,15 @@ var modalRequest = new Vue({
                     };
 
                     self.direction(A, B);
-                     //Cap nhat status cua request va driver
+                    //Cap nhat status cua request va driver
                     self.infoCustomer.status = 2;
-                    let id_d=id_driver;
-                    self.infoCustomer.driver_id = id_d;  
-                    updateStatusRequest(self.infoCustomer,true);
+                    let id_d = id_driver;
+                    self.infoCustomer.driver_id = id_d;
+                    updateStatusRequest(self.infoCustomer, true);
                     updateStatus(id_driver, 3)
                 }).catch((err) => {
                     console.log('het han');
-                    refreshToken(err,arg1,arg2,self.accessModal);
+                    refreshToken(err, arg1, arg2, self.accessModal);
                 })
         },
         direction: function (A, B) {
@@ -379,17 +380,17 @@ var updateStatus = function (id, status) {
             if (res.status === 200) {}
         }).catch(function (err) {
             console.log('het han');
-            refreshToken(err,id,status,updateStatus);
+            refreshToken(err, id, status, updateStatus);
         })
 }
 //call Api updateStatusRequest
-var updateStatusRequest = function (requestEntity,requestEntity2) {
+var updateStatusRequest = function (requestEntity, requestEntity2) {
     axiosInstance.put('/request', requestEntity)
         .then(function (res) {
             if (res.status === 200) {}
         }).catch(function (err) {
             console.log('het han');
-            refreshToken(err,requestEntity,requestEntity2,updateStatusRequest);
+            refreshToken(err, requestEntity, requestEntity2, updateStatusRequest);
         })
 }
 var deleteBlackList = function () {
@@ -413,9 +414,8 @@ var deleteBlackList = function () {
         })
         .catch(err => {
             console.log('het han');
-            refreshToken(err,true,true,deleteBlackList);
-        }
-            )
+            refreshToken(err, true, true, deleteBlackList);
+        })
 
 }
 
@@ -423,11 +423,12 @@ window.addEventListener("beforeunload", function (event) {
     event.returnValue = "Write something clever here..";
 });
 window.addEventListener("unload", function (event) {
+    updateStatus(id_driver, 2);
     deleteBlackList()
 });
 
 //call refreshtoken
-function refreshToken(err,arg1, arg2,callback) {
+function refreshToken(err, arg1, arg2, callback) {
     if (err.response.data.msg === "INVALID_TOKEN") {
         let user = JSON.parse(localStorage.getItem("user"));
         let rfTokenData = {
@@ -438,7 +439,7 @@ function refreshToken(err,arg1, arg2,callback) {
             .post("/account/token/refresh", rfTokenData)
             .then(function (res) {
                 localStorage.setItem(keyAccessToken, res.data.accToken);
-                return callback(arg1,arg2);
+                return callback(arg1, arg2);
             })
             .catch(function (err) {
                 console.log(err);

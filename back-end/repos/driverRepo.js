@@ -6,9 +6,9 @@ var requestRepo = require('./requestRepo');
 var events = require("../event/events");
 
 //sO LAn tim kiem driver
-var LOOP_FIND = 2;
+var LOOP_FIND = 3000;
 //Ban kinh tim driver
-var LIMIT_DISTANCE = 2000000; //meter
+var LIMIT_DISTANCE = 20000; //meter
 
 
 exports.loadAll = () => {
@@ -43,9 +43,12 @@ exports.update = (id, status, location) => {
             .catch(err => reject(err));
     });
 }
-exports.updateStatus = (id, status) => {
+var updateStatus = (id, status) => {
     var sql = `UPDATE currentdriver SET status=${status} where id_driver=${id}`;
     return db.excute(sql);
+}
+exports.updateStatus = (id, status) => {
+    return updateStatus(id,status);
 }
 exports.updateLocation = (id, location) => {
     var sql = `UPDATE currentdriver SET location_X=${location.X}, location_Y=${location.Y} where id_driver=${id}`;
@@ -177,22 +180,25 @@ var findDriverBest = (locationRe, id_request) => {
 exports.getDriverBest = async function (locationRequest, requestID) {
     let check = false;
     let result = -1;
-    for (let i = 0; i < 5000; i++) {
+    const reqid = requestID;
+    for (let i = 0; i < LOOP_FIND; i++) {
         if (!check) {
-            await findDriverBest(locationRequest, requestID).then(value => {
-                console.log(`id_driver: ${value} được chọn để gửi`)
-                if (value != -1) {
+            await findDriverBest(locationRequest, reqid).then(value => {
+                //Cap nhat trang thai driver
+                let va = value;
+                console.log(`id_driver: ${va} được chọn để gửi`)
+                if (va != -1) {
                     check = true;
-                    result = value;
-
+                    result = va;
+                    updateStatus(va, 4).then(v => {})
                 }
             });
         } else {
             return result;
         }
         //Cap nhat trang thai request khong co xe nhan
-        if (i === 4999) requestRepo.updateStatusRe(requestID, 6).then(value => {
-            requestRepo.getRequest(requestID).then(data => {
+        if (i === LOOP_FIND-1) requestRepo.updateStatusRe(reqid, 6).then(value => {
+            requestRepo.getRequest(reqid).then(data => {
                 events.publishRequestModified(data[0]);
             })
         })
